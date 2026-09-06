@@ -1,0 +1,154 @@
+/* Thread list. Prefix: .tl- */
+
+.tl {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg-elev);
+}
+
+.tl__head {
+  flex: none;
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.tl__head-row { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.tl__title {
+  font-size: var(--fs-lg);
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.tl__sub { color: var(--fg-faint); font-size: var(--fs-xs); white-space: nowrap; }
+.tl__spacer { flex: 1; }
+.tl__filters { display: flex; gap: var(--space-1); align-items: center; flex-wrap: wrap; }
+
+.tl__scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.tl__rows { position: relative; }
+
+.tl-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  background: var(--bg-elev);
+  box-sizing: border-box;
+  height: 76px;
+  overflow: hidden;
+}
+[data-density='compact'] .tl-row { height: 62px; }
+.tl-row:hover { background: var(--bg-hover); }
+.tl-row--selected { background: var(--bg-selected); }
+.tl-row--selected:hover { background: var(--bg-selected); }
+.tl-row--checked { background: var(--accent-soft); }
+.tl-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+.tl-row__bar {
+  width: 3px;
+  align-self: stretch;
+  flex: none;
+  border-radius: 0 2px 2px 0;
+}
+
+.tl-row__lead {
+  width: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2px;
+}
+.tl-row__check { display: none; }
+.tl-row:hover .tl-row__check,
+.tl-row--checked .tl-row__check { display: inline-flex; }
+.tl-row:hover .tl-row__avatar,
+.tl-row--checked .tl-row__avatar { display: none; }
+
+.tl-row__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.tl-row__line1 { display: flex; align-items: baseline; gap: var(--space-2); min-width: 0; }
+.tl-row__people {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg);
+  font-size: var(--fs-md);
+}
+.tl-row--unread .tl-row__people { font-weight: 700; }
+.tl-row__count {
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+  background: var(--bg-hover);
+  border-radius: 999px;
+  padding: 0 5px;
+  flex: none;
+}
+.tl-row__date { flex: none; font-size: var(--fs-xs); color: var(--fg-faint); white-space: nowrap; }
+.tl-row--unread .tl-row__date { color: var(--accent); font-weight: 600; }
+
+.tl-row__subject {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-md);
+  color: var(--fg);
+}
+.tl-row--unread .tl-row__subject { font-weight: 600; }
+
+.tl-row__snippet {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--fg-faint);
+}
+
+.tl-row__meta { display: flex; align-items: center; gap: var(--space-1); flex: none; padding-top: 2px; }
+.tl-row__attach { color: var(--fg-faint); display: inline-flex; }
+.tl-row__actions { display: none; align-items: center; gap: 2px; }
+.tl-row:hover .tl-row__actions { display: flex; }
+.tl-row:hover .tl-row__attach { display: none; }
+
+.tl__bulk {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-sm);
+}
+.tl__bulk-count { font-weight: 600; }
+
+.tl__more {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  color: var(--fg-faint);
+  font-size: var(--fs-sm);
+}
+
+.tl__skeleton { padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-4); }
+.tl__skeleton-row { display: flex; gap: var(--space-3); align-items: center; }
+.tl__skeleton-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-hover); flex: none; }
+.tl__skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.tl__skeleton-line { height: 9px; border-radius: 4px; background: var(--bg-hover); }
+.tl__skeleton-line--short { width: 45%; }
+.tl__skeleton-line--mid { width: 75%; }

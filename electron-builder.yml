@@ -1,0 +1,32 @@
+appId: com.jamiefarrell.unimail
+productName: UniMail
+directories:
+  buildResources: resources
+  output: release
+files:
+  - out/**
+  - package.json
+  - '!**/*.map'
+# The tray icons are read at runtime from process.resourcesPath/resources (see src/main/paths.ts).
+extraResources:
+  - from: resources
+    to: resources
+    filter:
+      - '**/*'
+  # Personal OAuth client ids (gitignored). Seeds Settings > Connected apps on first run.
+  - from: config/oauth-clients.local.json
+    to: oauth-clients.json
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  # electron-builder generates the .ico from this 256px png.
+  icon: resources/icon.png
+  artifactName: UniMail-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: UniMail

@@ -1,0 +1,141 @@
+/* Thread reader. Prefix: .tv- */
+
+.tv {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg-elev);
+}
+
+.tv__head {
+  flex: none;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.tv__subject {
+  font-size: var(--fs-xl);
+  font-weight: 650;
+  line-height: 1.3;
+  word-break: break-word;
+}
+.tv__submeta { display: flex; align-items: center; gap: var(--space-2); color: var(--fg-faint); font-size: var(--fs-xs); flex-wrap: wrap; }
+.tv__actions { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+.tv__actions-sep { width: 1px; height: 18px; background: var(--border); margin: 0 var(--space-1); }
+.tv__spacer { flex: 1; }
+
+.tv__scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--space-3) var(--space-4) var(--space-6); }
+
+.tv-message {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elev);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+}
+.tv-message--collapsed { background: var(--bg); }
+.tv-message--unread { border-color: var(--accent); }
+
+.tv-message__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+}
+.tv-message__head:hover { background: var(--bg-hover); }
+.tv-message__who { flex: 1; min-width: 0; }
+.tv-message__from { font-weight: 600; font-size: var(--fs-md); }
+.tv-message__address { color: var(--fg-faint); font-size: var(--fs-sm); margin-left: var(--space-1); }
+.tv-message__to { color: var(--fg-faint); font-size: var(--fs-sm); display: flex; align-items: center; gap: 4px; }
+.tv-message__preview {
+  color: var(--fg-faint);
+  font-size: var(--fs-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tv-message__right { display: flex; align-items: center; gap: var(--space-2); flex: none; }
+.tv-message__date { color: var(--fg-faint); font-size: var(--fs-xs); white-space: nowrap; }
+
+.tv-message__details {
+  margin: 0 var(--space-3) var(--space-2) 56px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-sunken);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px var(--space-3);
+}
+.tv-message__details dt { color: var(--fg-faint); }
+.tv-message__details dd { margin: 0; word-break: break-word; }
+
+.tv-message__body { padding: 0 var(--space-3) var(--space-3) 56px; }
+.tv-message__frame {
+  width: 100%;
+  border: none;
+  display: block;
+  background: transparent;
+  min-height: 40px;
+  color-scheme: normal;
+}
+
+.tv-images-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 var(--space-3) var(--space-2) 56px;
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in srgb, var(--warning) 12%, var(--bg-elev));
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--border));
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+}
+
+.tv-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 var(--space-3) var(--space-3) 56px;
+}
+.tv-attachment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-sunken);
+  max-width: 260px;
+  cursor: pointer;
+}
+.tv-attachment:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.tv-attachment__thumb {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  object-fit: cover; flex: none; background: var(--bg-hover);
+  display: grid; place-items: center; color: var(--fg-faint);
+}
+.tv-attachment__meta { min-width: 0; flex: 1; }
+.tv-attachment__name {
+  font-size: var(--fs-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fg);
+}
+.tv-attachment__size { font-size: var(--fs-xs); color: var(--fg-faint); }
+
+.tv__reply-bar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 0 56px;
+  flex-wrap: wrap;
+}
+
+.tv__empty { flex: 1; display: grid; place-items: center; }

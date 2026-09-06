@@ -1,0 +1,206 @@
+/* Reset, chrome and app shell layout. Colours come from tokens.css only. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, p, figure, ul, ol { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; }
+
+::selection { background: var(--accent); color: var(--accent-fg); }
+
+/* Scrollbars */
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background-clip: content-box; opacity: 1; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* Focus */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------------------------------------------------------------- shell */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg);
+}
+
+.titlebar {
+  height: var(--titlebar-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-2);
+  /* space for the Electron window-controls overlay on the right */
+  padding-right: 148px;
+  background: var(--bg-sunken);
+  border-bottom: 1px solid var(--border);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.titlebar__brand {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-weight: 600; font-size: var(--fs-md); color: var(--fg-muted);
+  padding: 0 var(--space-2);
+  white-space: nowrap;
+}
+.titlebar__brand svg { color: var(--accent); }
+.titlebar__spacer { flex: 1; }
+.titlebar__center {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  -webkit-app-region: no-drag;
+}
+.titlebar__right { display: flex; align-items: center; gap: var(--space-1); -webkit-app-region: no-drag; }
+.titlebar button, .titlebar input, .titlebar a { -webkit-app-region: no-drag; }
+
+.app-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.pane--nav {
+  width: var(--sidebar-w);
+  flex: none;
+  background: var(--bg-sunken);
+  border-right: 1px solid var(--border);
+}
+.pane--list {
+  width: var(--list-w);
+  flex: none;
+  background: var(--bg-elev);
+  border-right: 1px solid var(--border);
+}
+.pane--reader { flex: 1; background: var(--bg-elev); }
+.pane--full { flex: 1; background: var(--bg); overflow: auto; }
+
+/* ---------------------------------------------------------------- banners */
+.banner {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-sm);
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+.banner--warning { background: color-mix(in srgb, var(--warning) 14%, var(--bg-elev)); color: var(--fg); }
+.banner--danger { background: color-mix(in srgb, var(--danger) 12%, var(--bg-elev)); color: var(--fg); }
+.banner--muted { background: var(--bg-sunken); color: var(--fg-muted); }
+.banner__text { flex: 1; }
+.banner__icon { display: inline-flex; flex: none; }
+.banner--warning .banner__icon { color: var(--warning); }
+.banner--danger .banner__icon { color: var(--danger); }
+
+/* ---------------------------------------------------------------- first run */
+.firstrun {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background: var(--bg);
+}
+.firstrun__card {
+  max-width: 460px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+}
+.firstrun__logo { color: var(--accent); }
+.firstrun__title { font-size: var(--fs-2xl); font-weight: 650; }
+.firstrun__desc { color: var(--fg-muted); line-height: 1.55; }
+
+/* ---------------------------------------------------------------- shortcuts help */
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--space-4);
+}
+.shortcuts-group__title {
+  font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em;
+  color: var(--fg-faint); margin-bottom: var(--space-2);
+}
+.shortcuts-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-3); padding: 3px 0;
+}
+.shortcuts-row__label { color: var(--fg-muted); }
+
+/* ---------------------------------------------------------------- responsive */
+.nav-scrim { display: none; }
+
+@media (max-width: 1100px) {
+  .pane--list { width: 320px; }
+}
+
+@media (max-width: 900px) {
+  .pane--nav {
+    position: absolute;
+    top: var(--titlebar-h);
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    box-shadow: var(--shadow-md);
+    transform: translateX(-100%);
+    transition: transform .16s ease;
+  }
+  .app--nav-open .pane--nav { transform: none; }
+  .app--nav-open .nav-scrim {
+    display: block;
+    position: absolute; inset: var(--titlebar-h) 0 0 0;
+    background: rgba(0,0,0,.3);
+    z-index: 55;
+  }
+  .app-body { position: relative; }
+  .pane--list { width: 300px; }
+}
+
+@media (max-width: 720px) {
+  .pane--list { width: 100%; }
+  .pane--reader { display: none; }
+  .app--reading .pane--list { display: none; }
+  .app--reading .pane--reader { display: flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
