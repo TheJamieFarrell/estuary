@@ -473,7 +473,8 @@ export function snippetFromPartialText(raw: Buffer | string | undefined, structu
         : Buffer.from(candidate.content, 'latin1')
   const text = decodeCharset(bytes, candidate.charset)
   // A truncated fetch may end mid-tag; drop the dangling fragment before stripping tags.
-  const cleaned = candidate.type === 'text/html' ? htmlToText(text.replace(/<[^>]*$/, '')) : text
+  const cleaned =
+    candidate.type === 'text/html' ? htmlToText(text.replace(/<!--(?:(?!-->)[\s\S])*$/, '').replace(/<[^>]*$/, '')) : text
   return makeSnippet({ text: cleaned })
 }
 

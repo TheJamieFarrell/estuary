@@ -156,6 +156,17 @@ export function createUpdater(opts: {
         }
       }, CHECK_EVERY_MS)
       timer.unref()
+      // Also look when the user comes back to the window, at most every few minutes.
+      let lastFocusCheck = 0
+      app.on('browser-window-focus', () => {
+        if (Date.now() - lastFocusCheck < 3 * 60_000) return
+        lastFocusCheck = Date.now()
+        try {
+          check()
+        } catch (err) {
+          scope.warn('update check failed', err)
+        }
+      })
     },
     stop() {
       if (timer) clearInterval(timer)

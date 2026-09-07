@@ -382,6 +382,15 @@ export class AccountSyncer {
     if (this.backfilling || this.stopped) return
     this.backfilling = true
     try {
+      // Inbox previews first: they are what the user is looking at right now.
+      for (const folder of folders.filter((f) => f.kind === 'inbox')) {
+        if (this.stopped) break
+        try {
+          await this.backfillSnippets(folder)
+        } catch (err) {
+          syncLog.warn(`[${this.account.email}] snippet backfill ${folder.path} failed: ${errorMessage(err)}`)
+        }
+      }
       for (const folder of folders) {
         if (this.stopped) break
         // Gmail's All Mail mirrors every other folder - backfill it, never prefetch bodies there.

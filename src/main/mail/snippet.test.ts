@@ -40,6 +40,14 @@ describe('snippetFromPartialText', () => {
     expect(out).toBe('Nested plain text here')
   })
 
+  it('drops an unterminated html comment at the truncation point', () => {
+    const out = snippetFromPartialText(Buffer.from('<p>Keep track of your data</p><!-- tracking pixel start', 'latin1'), {
+      type: 'text/html',
+      encoding: '7bit'
+    })
+    expect(out).toBe('Keep track of your data')
+  })
+
   it('returns empty for missing input', () => {
     expect(snippetFromPartialText(undefined, { type: 'text/plain' })).toBe('')
     expect(snippetFromPartialText(Buffer.alloc(0), { type: 'text/plain' })).toBe('')

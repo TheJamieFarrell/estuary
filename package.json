@@ -1,7 +1,7 @@
 {
   "name": "unimail",
   "productName": "UniMail",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Universal inbox: Gmail, Outlook, Spacemail and any IMAP account in one desktop app",
   "main": "./out/main/index.js",
   "author": "Jamie Farrell",
