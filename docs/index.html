@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Estuary — every inbox, one tide</title>
+<meta name="description" content="A free, open-source desktop email client for Windows. Gmail, Outlook / Microsoft 365, Spacemail and any IMAP account in one fast, offline-capable inbox. Your mail stays on your PC." />
+<link rel="icon" href="assets/icon.png" type="image/png" />
+<link rel="apple-touch-icon" href="assets/icon.png" />
+<link rel="canonical" href="https://estuary.email/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Estuary" />
+<meta property="og:url" content="https://estuary.email/" />
+<meta property="og:title" content="Estuary — every inbox, one tide" />
+<meta property="og:description" content="A free, open-source desktop email client for Windows. Gmail, Outlook, Spacemail and any IMAP account in one fast, offline-capable inbox." />
+<meta property="og:image" content="https://estuary.email/assets/inbox-dark.png" />
+<meta property="og:image:width" content="2884" />
+<meta property="og:image:height" content="1804" />
+<meta property="og:image:alt" content="The Estuary inbox in dark theme, showing a unified message list and an open conversation." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Estuary — every inbox, one tide" />
+<meta name="twitter:description" content="A free, open-source desktop email client for Windows. Gmail, Outlook, Spacemail and any IMAP account in one fast, offline-capable inbox." />
+<meta name="twitter:image" content="https://estuary.email/assets/inbox-dark.png" />
+<meta name="theme-color" content="#15171c" />
+
+<style>
+/* ---------------------------------------------------------------- tokens */
+:root {
+  color-scheme: dark;
+  --bg: #15171c;
+  --bg-elev: #1d2027;
+  --bg-sunken: #101216;
+  --fg: #e6e8ee;
+  --fg-muted: #a3a9b6;
+  --fg-faint: #6e7484;
+  --border: #2a2e37;
+  --border-strong: #3a3f4b;
+  --accent: #5b8def;
+  --accent-strong: #2f6fed;
+  --accent-fg: #ffffff;
+  --accent-soft: #1f2c47;
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, .55);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+  --glow: radial-gradient(1100px 520px at 50% -180px, rgba(91, 141, 239, .22), transparent 70%);
+  --max: 1120px;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #f6f7f9;
+    --bg-elev: #ffffff;
+    --bg-sunken: #eceef2;
+    --fg: #1b1f27;
+    --fg-muted: #5b6270;
+    --fg-faint: #8a919e;
+    --border: #e1e4ea;
+    --border-strong: #c9ced8;
+    --accent: #2f6fed;
+    --accent-strong: #2f6fed;
+    --accent-fg: #ffffff;
+    --accent-soft: #e8f0fe;
+    --shadow-lg: 0 24px 60px rgba(20, 30, 60, .14);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .06);
+    --glow: radial-gradient(1100px 520px at 50% -200px, rgba(47, 111, 237, .12), transparent 70%);
+  }
+}
+
+/* ----------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image: var(--glow);
+  background-repeat: no-repeat;
+  color: var(--fg);
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.02em; margin: 0; }
+p { margin: 0; }
+code, kbd {
+  font-family: 'Cascadia Code', ui-monospace, Consolas, monospace;
+  font-size: .87em;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: .1em .38em;
+}
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+section { padding: 84px 0; }
+section + section { border-top: 1px solid var(--border); }
+.section-head { max-width: 660px; margin-bottom: 44px; }
+.section-head h2 { font-size: clamp(26px, 4vw, 34px); }
+.section-head p { color: var(--fg-muted); margin-top: 12px; font-size: 17px; }
+
+/* ------------------------------------------------------------------ nav */
+header.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 62px;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.01em; color: var(--fg); }
+.brand:hover { text-decoration: none; }
+.brand img { width: 26px; height: 26px; border-radius: 7px; }
+.nav-links { margin-left: auto; display: flex; align-items: center; gap: 26px; font-size: 15px; }
+.nav-links a { color: var(--fg-muted); }
+.nav-links a:hover { color: var(--fg); text-decoration: none; }
+@media (max-width: 720px) { .nav-links .hide-sm { display: none; } }
+
+/* ----------------------------------------------------------------- hero */
+.hero { padding: 92px 0 64px; text-align: center; }
+.hero-icon {
+  width: 84px; height: 84px;
+  border-radius: 20px;
+  margin: 0 auto 26px;
+  box-shadow: var(--shadow-lg);
+}
+.hero h1 { font-size: clamp(40px, 7vw, 62px); font-weight: 700; }
+.tagline {
+  margin-top: 12px;
+  font-size: clamp(19px, 2.6vw, 23px);
+  color: var(--accent);
+  font-weight: 550;
+  letter-spacing: -.01em;
+}
+.pitch {
+  margin: 20px auto 0;
+  max-width: 640px;
+  color: var(--fg-muted);
+  font-size: 18px;
+}
+.cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 34px; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 26px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn-primary { background: var(--accent-strong); color: var(--accent-fg); box-shadow: 0 6px 22px rgba(47, 111, 237, .3); }
+.btn-primary:hover { background: color-mix(in srgb, var(--accent-strong) 88%, #fff); }
+.btn-secondary { background: var(--bg-elev); color: var(--fg); border-color: var(--border-strong); }
+.btn-secondary:hover { border-color: var(--fg-faint); }
+.btn svg { width: 18px; height: 18px; fill: currentColor; }
+.meta { margin-top: 16px; font-size: 14px; color: var(--fg-faint); }
+.smartscreen {
+  margin: 26px auto 0;
+  max-width: 560px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--fg-muted);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 13px 18px;
+  text-align: left;
+}
+.smartscreen strong { color: var(--fg); font-weight: 600; }
+
+/* ----------------------------------------------------------- screenshot */
+.shot-wrap { margin-top: 60px; }
+.shot {
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  background: var(--bg-elev);
+}
+.shot img { width: 100%; height: auto; }
+.shot-dark { display: block; }
+.shot-light { display: none; }
+@media (prefers-color-scheme: light) {
+  .shot-dark { display: none; }
+  .shot-light { display: block; }
+}
+figcaption { margin-top: 14px; font-size: 14px; color: var(--fg-faint); text-align: center; }
+
+/* ------------------------------------------------------------- features */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 24px;
+}
+.card h3 { font-size: 17px; font-weight: 650; margin-bottom: 8px; }
+.card p { color: var(--fg-muted); font-size: 15.5px; line-height: 1.6; }
+.card .ic {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+}
+.card .ic svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+/* -------------------------------------------------------------- sign-in */
+.signin-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+@media (max-width: 860px) { .signin-layout { grid-template-columns: 1fr; gap: 32px; } }
+.route {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--bg-elev);
+  padding: 22px 24px;
+}
+.route + .route { margin-top: 16px; }
+.route h3 { font-size: 16.5px; font-weight: 650; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.pill {
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 650;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.route p { color: var(--fg-muted); font-size: 15.5px; }
+.route p + p { margin-top: 10px; }
+.note {
+  margin-top: 22px;
+  font-size: 15px;
+  color: var(--fg-muted);
+  border-left: 3px solid var(--border-strong);
+  padding-left: 16px;
+}
+
+/* ------------------------------------------------------------- compose */
+.compose-shot { max-width: 780px; margin: 0 auto; }
+
+/* ------------------------------------------------------------------ faq */
+.faq { max-width: 780px; }
+details {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+}
+details:first-of-type { border-top: 1px solid var(--border); }
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 17px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after {
+  content: '+';
+  margin-left: auto;
+  color: var(--fg-faint);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1;
+  transition: transform .16s ease;
+}
+details[open] summary::after { content: '−'; }
+details p { color: var(--fg-muted); font-size: 16px; margin-top: 12px; }
+details p + p { margin-top: 10px; }
+
+/* -------------------------------------------------------------- closing */
+.closing { text-align: center; }
+.closing h2 { font-size: clamp(26px, 4vw, 34px); }
+.closing p { color: var(--fg-muted); margin-top: 12px; }
+
+/* --------------------------------------------------------------- footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 36px 0 56px;
+  color: var(--fg-faint);
+  font-size: 14.5px;
+}
+.foot-inner { display: flex; flex-wrap: wrap; gap: 12px 26px; align-items: center; }
+.foot-inner .sep { margin-left: auto; }
+@media (max-width: 620px) { .foot-inner .sep { margin-left: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><img src="assets/icon.png" alt="" /> Estuary</a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="#features">Features</a>
+      <a class="hide-sm" href="#signin">Sign-in</a>
+      <a class="hide-sm" href="#faq">FAQ</a>
+      <a href="https://github.com/TheJamieFarrell/estuary">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ------------------------------------------------------------ hero -->
+  <section class="hero">
+    <div class="wrap">
+      <img class="hero-icon" src="assets/icon.png" alt="Estuary app icon" width="84" height="84" />
+      <h1>Estuary</h1>
+      <p class="tagline">Every inbox, one tide.</p>
+      <p class="pitch">
+        A free, open-source desktop email client for Windows that puts Gmail, Outlook,
+        Spacemail and any other IMAP account into a single fast inbox — and keeps your
+        mail on your own PC.
+      </p>
+
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/TheJamieFarrell/estuary/releases/latest/download/Estuary-Setup.exe">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 14.2V3h2zM4 19h16v2H4v-2z"/></svg>
+          Download for Windows
+        </a>
+        <a class="btn btn-secondary" href="https://github.com/TheJamieFarrell/estuary">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.3 1.19-3.1-.12-.3-.52-1.48.11-3.08 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.6.23 2.78.12 3.08.74.8 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <p class="meta">Windows 10/11 · free &amp; open source · ~115&nbsp;MB</p>
+
+      <p class="smartscreen">
+        <strong>Heads up:</strong> the installer is not code-signed, so Windows may warn about
+        an unrecognised app. Choose <strong>More info → Run anyway</strong> to continue. Every
+        line of the build is on GitHub if you would rather compile it yourself.
+      </p>
+
+      <figure class="shot-wrap">
+        <div class="shot">
+          <img class="shot-dark" src="assets/inbox-dark.png" alt="Estuary's unified inbox in dark theme: mailbox sidebar with two accounts, a merged message list, and an open two-message conversation with an attachment." />
+          <img class="shot-light" src="assets/inbox-light.png" alt="The same Estuary inbox in light theme." />
+        </div>
+        <figcaption>Two accounts, one list. Light and dark themes ship with the app.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------- features -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">What it does</p>
+        <h2>A real mail client, not a wrapper around a web page</h2>
+        <p>
+          Estuary talks IMAP and SMTP directly, caches everything in a local SQLite
+          database, and renders a native UI on top. That is why it is quick, and why it
+          still works when the network is not.
+        </p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div>
+          <h3>One unified inbox</h3>
+          <p>Gmail, Outlook / Microsoft 365, Spacemail, iCloud, Yahoo, Fastmail and any other IMAP server, merged into a single list ordered by date — or browsed one account at a time.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>
+          <h3>Actions that stick</h3>
+          <p>Archive, delete, star, mark read, move and report spam apply instantly in the UI, then replay to the server. Archive means the right thing on every provider, Gmail included.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Proper threading</h3>
+          <p>Conversations are stitched with Gmail's thread ids where available, and with <code>References</code> / <code>In-Reply-To</code> chains elsewhere, falling back to subject and participants.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></div>
+          <h3>Instant offline search</h3>
+          <p>Search runs against the local cache, so results appear as you type — with <code>from:</code>, <code>is:unread</code> and <code>has:attachment</code> operators. No round trip, no waiting.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <h3>Compose with attachments</h3>
+          <p>A rich-text composer in its own window, so it floats beside the inbox. Drag files in, reply and forward with quoted history, and save drafts back to the account.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></div>
+          <h3>Notifications &amp; tray</h3>
+          <p>New-mail notifications that open the conversation when clicked, a tray icon with an unread badge, close-to-tray, start-on-login, and <code>mailto:</code> link handling.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div>
+          <h3>Your mail stays on your PC</h3>
+          <p>No server of ours sits in the middle — there isn't one. Messages live in a local database, passwords and tokens are encrypted with Windows DPAPI, and nothing is tracked.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+          <h3>OAuth with your own client</h3>
+          <p>Gmail and Outlook sign in through your system browser with PKCE, against an OAuth client you register yourself. Your credentials are never handed to anyone else's app.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></div>
+          <h3>In-app updates</h3>
+          <p>Estuary checks GitHub Releases for a newer version, verifies the download's SHA-512 against the release manifest, and installs it without a UAC prompt.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- sign-in -->
+  <section id="signin">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">The honest bit</p>
+        <h2>How sign-in works</h2>
+        <p>
+          Estuary is a personal project, not a Google-verified product, so it does not ship
+          with credentials of its own. Depending on the provider, that means one of three
+          routes — and only two of them take any setup at all.
+        </p>
+      </div>
+
+      <div class="signin-layout">
+        <div>
+          <div class="route">
+            <h3>Most accounts <span class="pill">no setup</span></h3>
+            <p>
+              Spacemail, iCloud, Yahoo, Fastmail and any IMAP server of your own: type the
+              address, enter the password, done. Estuary fills in the server settings from its
+              provider list, or discovers them from autoconfig and DNS.
+            </p>
+            <p>
+              Providers with two-factor authentication want an <strong>app password</strong>
+              rather than your normal one; the account wizard links straight to the right page
+              for each.
+            </p>
+          </div>
+
+          <div class="route">
+            <h3>Gmail <span class="pill">5 minutes, or none</span></h3>
+            <p>
+              The quick route is a Google <strong>app password</strong>: turn on 2-Step
+              Verification, generate a 16-character password, paste it in. Nothing else to set up.
+            </p>
+            <p>
+              The better route is OAuth — you create a free “Desktop app” OAuth client in
+              Google Cloud under your own account and paste its client ID into Estuary once.
+              Roughly ten minutes, and you never do it again.
+            </p>
+          </div>
+
+          <div class="route">
+            <h3>Outlook / Microsoft 365 <span class="pill">OAuth required</span></h3>
+            <p>
+              Microsoft switched off password authentication for IMAP and SMTP on personal
+              accounts, and app passwords no longer work for mail. So Outlook needs an app
+              registration in Entra — free, about ten minutes, and the guide walks through
+              every screen.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="route">
+            <h3>Why you register the client, not me</h3>
+            <p>
+              Google and Microsoft tie mail access to a registered application. Shipping one
+              set of credentials inside an open-source app would mean publishing them — and
+              would route every user's consent through an identity you have no reason to
+              trust. Registering your own takes ten minutes and keeps the app's access
+              entirely between you and your provider.
+            </p>
+            <p>
+              Estuary uses the loopback flow from RFC 8252: your system browser opens, you
+              approve, and the code comes back to a one-shot listener on <code>127.0.0.1</code>.
+              PKCE is always on and there is no embedded browser.
+            </p>
+            <p style="margin-top:18px">
+              <a class="btn btn-secondary" href="https://github.com/TheJamieFarrell/estuary/blob/main/docs/OAUTH-SETUP.md">Read the OAuth setup guide</a>
+            </p>
+          </div>
+
+          <p class="note">
+            One caveat the guide covers in detail: leave your Google app in “Testing” and
+            Google expires its refresh tokens after seven days, so Gmail will ask you to sign
+            in again every week. Publishing the app — one click, no verification review —
+            stops that.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- compose -->
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Writing mail</p>
+        <h2>Compose in its own window</h2>
+        <p>
+          Replies open beside the inbox rather than on top of it, so you can keep reading
+          while you write. Rich text, attachments, Cc/Bcc, contact autocomplete from your
+          own mail, and drafts that sync back to the account.
+        </p>
+      </div>
+      <figure class="compose-shot">
+        <div class="shot">
+          <img src="assets/compose.png" alt="The Estuary compose window: a From account picker, a recipient chip, a subject line, and a rich-text body with a Send button." />
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- faq -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Questions</p>
+        <h2>FAQ</h2>
+      </div>
+
+      <div class="faq">
+        <details open>
+          <summary>Is it free?</summary>
+          <p>
+            Yes — free to download, free to use, MIT-licensed, and there is no paid tier,
+            no account to create and nothing to subscribe to. The source is on GitHub and
+            you are welcome to build it yourself.
+          </p>
+        </details>
+
+        <details>
+          <summary>Where is my mail stored?</summary>
+          <p>
+            On your PC, in <code>%APPDATA%\Estuary</code> — a SQLite database for messages,
+            threads, folders and settings, plus a folder of downloaded attachments.
+            Passwords and OAuth refresh tokens are encrypted with Windows DPAPI through
+            Electron's <code>safeStorage</code> and never leave the main process.
+          </p>
+          <p>
+            Estuary talks to your mail servers and, when you ask it to, to GitHub Releases
+            to check for updates. There is no analytics, no telemetry and no server of mine
+            anywhere in the path.
+          </p>
+        </details>
+
+        <details>
+          <summary>Which accounts can I add?</summary>
+          <p>
+            Gmail, Outlook.com / Hotmail / Live / Microsoft 365, Spacemail (Spaceship),
+            iCloud, Yahoo, Fastmail — and any other server that speaks IMAP and SMTP. If
+            Estuary does not recognise the domain it looks the settings up in Thunderbird's
+            autoconfig database and in DNS, then lets you type them in by hand.
+          </p>
+          <p>You can add as many accounts as you like; they all land in the same inbox.</p>
+        </details>
+
+        <details>
+          <summary>Is there a Mac or Linux build?</summary>
+          <p>
+            Not yet. Windows comes first: it is what gets built, signed off and tested. The
+            codebase is Electron and nothing in it is Windows-only apart from the DPAPI-backed
+            secret storage, which has platform equivalents, so macOS and Linux builds are
+            planned rather than ruled out.
+          </p>
+        </details>
+
+        <details>
+          <summary>Why does Windows warn me about the installer?</summary>
+          <p>
+            Because the build is not code-signed — a certificate costs several hundred pounds
+            a year, which is hard to justify for a free project. SmartScreen flags anything it
+            has not seen before. Choose <strong>More info → Run anyway</strong>, or build from
+            source if you would rather not take my word for it.
+          </p>
+        </details>
+
+        <details>
+          <summary>How do updates work?</summary>
+          <p>
+            Estuary periodically checks the latest GitHub release for a manifest, compares
+            versions, and offers the update. The installer it downloads is checked against the
+            SHA-512 in that manifest before it runs, and it installs per-user, so there is no
+            administrator prompt.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- closing -->
+  <section class="closing">
+    <div class="wrap">
+      <h2>Give it your inboxes</h2>
+      <p>One download, no account, nothing to cancel.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/TheJamieFarrell/estuary/releases/latest/download/Estuary-Setup.exe">Download for Windows</a>
+        <a class="btn btn-secondary" href="https://github.com/TheJamieFarrell/estuary">View on GitHub</a>
+      </div>
+      <p class="meta">Windows 10/11 · free &amp; open source · ~115&nbsp;MB</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>© 2026 Jamie Farrell</span>
+    <span><a href="https://github.com/TheJamieFarrell/estuary/blob/main/LICENSE">MIT licence</a></span>
+    <span><a href="https://github.com/TheJamieFarrell/estuary">GitHub</a></span>
+    <span><a href="https://github.com/TheJamieFarrell/estuary/blob/main/docs/OAUTH-SETUP.md">OAuth setup</a></span>
+    <span class="sep">Made by Jamie Farrell</span>
+  </div>
+</footer>
+
+</body>
+</html>

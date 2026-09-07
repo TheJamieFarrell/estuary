@@ -1,4 +1,4 @@
-# UniMail architecture
+# Estuary architecture
 
 Universal inbox desktop app for Windows. Electron 44 + electron-vite + React 19 + TypeScript.
 Accounts: Gmail, Outlook/Microsoft 365, Spacemail (Spaceship), and any IMAP/SMTP server.

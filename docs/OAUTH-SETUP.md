@@ -1,13 +1,13 @@
-# Connecting Gmail and Outlook to UniMail
+# Connecting Gmail and Outlook to Estuary
 
-UniMail talks to every mailbox over plain IMAP and SMTP. For most providers that means a
+Estuary talks to every mailbox over plain IMAP and SMTP. For most providers that means a
 password (usually an *app password*). Google and Microsoft are different: they want the app to
 sign you in through your browser using OAuth 2.0, and they require the app itself to be
 registered in their developer console first.
 
-Because UniMail is a personal app rather than a product with a published, Google-verified
+Because Estuary is a personal app rather than a product with a published, Google-verified
 identity, **you register the app once, under your own account**, and paste the resulting client
-ID into UniMail's settings. It takes about ten minutes per provider and you never do it again.
+ID into Estuary's settings. It takes about ten minutes per provider and you never do it again.
 
 - **Gmail** – OAuth is recommended, but there is a five-minute alternative: an **app password**.
   See [Gmail without any setup](#gmail-without-any-setup-app-passwords) at the end.
@@ -16,18 +16,18 @@ ID into UniMail's settings. It takes about ten minutes per provider and you neve
   passwords no longer work for mail. There is no way around Part B for these accounts.
 - Everything else (Spacemail, iCloud, Yahoo, Fastmail, your own IMAP server) needs none of this.
 
-## What UniMail does with what you paste in
+## What Estuary does with what you paste in
 
-UniMail runs the loopback flow from RFC 8252: it opens your **system browser**, listens on a
+Estuary runs the loopback flow from RFC 8252: it opens your **system browser**, listens on a
 random port on `127.0.0.1`, and catches the authorization code when the provider redirects back.
 PKCE (S256) is always used. There is no embedded browser and no password ever passes through
-UniMail. Refresh tokens are encrypted with Windows DPAPI (Electron `safeStorage`) and stored in
+Estuary. Refresh tokens are encrypted with Windows DPAPI (Electron `safeStorage`) and stored in
 the local SQLite database; they are never sent to the renderer process and never leave your PC
 except back to Google or Microsoft.
 
 ### Redirect URIs
 
-| Provider | What UniMail actually calls | What you register in the console |
+| Provider | What Estuary actually calls | What you register in the console |
 | --- | --- | --- |
 | Google | `http://127.0.0.1:<random port>/callback` | **Nothing.** A "Desktop app" client accepts any loopback address, port and path automatically. |
 | Microsoft | `http://localhost:<random port>` | Exactly `http://localhost` — no port, no trailing slash, no path. |
@@ -35,9 +35,9 @@ except back to Google or Microsoft.
 Two things worth knowing about the Microsoft entry:
 
 - Entra **ignores the port** on `localhost` redirect URIs, which is why a single
-  `http://localhost` registration covers every random port UniMail picks.
+  `http://localhost` registration covers every random port Estuary picks.
 - The Azure/Entra portal **refuses to accept `http://127.0.0.1`** in the redirect URI box (only
-  `https` is allowed for non-localhost hosts). Type `localhost`, not the IP address. UniMail also
+  `https` is allowed for non-localhost hosts). Type `localhost`, not the IP address. Estuary also
   listens on `[::1]` with the same port, so it does not matter which address your browser
   resolves `localhost` to.
 
@@ -51,7 +51,7 @@ You need a Google Cloud project, the Gmail API enabled on it, an OAuth consent s
 ### A1. Create a project
 
 1. Open <https://console.cloud.google.com/projectcreate>.
-2. **Project name**: `UniMail` (only you will ever see it). Leave the organisation as-is.
+2. **Project name**: `Estuary` (only you will ever see it). Leave the organisation as-is.
 3. Click **Create**, then make sure the new project is selected in the picker at the top of the
    page before continuing.
 
@@ -60,8 +60,8 @@ You need a Google Cloud project, the Gmail API enabled on it, an OAuth consent s
 1. Open <https://console.cloud.google.com/apis/library/gmail.googleapis.com>.
 2. Check the project name at the top, then click **Enable**.
 
-The `https://mail.google.com/` scope UniMail requests belongs to the Gmail API, so the API has to
-be enabled on the project even though UniMail connects over IMAP rather than the REST API.
+The `https://mail.google.com/` scope Estuary requests belongs to the Gmail API, so the API has to
+be enabled on the project even though Estuary connects over IMAP rather than the REST API.
 
 ### A3. Configure the Google Auth Platform
 
@@ -70,7 +70,7 @@ Branding, Audience, Data Access, Clients and Verification Center.
 
 1. Open <https://console.cloud.google.com/auth/overview>.
 2. Click **Get started** and fill in the short form:
-   - **App name**: `UniMail`
+   - **App name**: `Estuary`
    - **User support email**: your own address
    - **Audience**: choose **External**. (**Internal** only exists if you have Google Workspace,
      and if you pick it only accounts in your Workspace can sign in.)
@@ -89,7 +89,7 @@ matters more than it looks:
 | **Refresh token lifetime** | **Expires after 7 days** | Does not expire |
 
 Google expires refresh tokens issued by an app in *Testing* after seven days, so if you leave the
-app in Testing **UniMail will ask you to sign in to Gmail again every week**. Pick one:
+app in Testing **Estuary will ask you to sign in to Gmail again every week**. Pick one:
 
 - **Recommended — publish it.** On the Audience page click **Publish app** and confirm. Because
   `https://mail.google.com/` is a *restricted* scope and your app is not verified, you will still
@@ -97,7 +97,7 @@ app in Testing **UniMail will ask you to sign in to Gmail again every week**. Pi
   stop expiring. You do **not** need to submit anything for verification; verification only
   matters if you intend to distribute the app to other people.
 - **Or accept the weekly re-login.** Stay in Testing and, under **Test users**, click **Add
-  users**, enter every Gmail address you plan to add to UniMail, and **Save**. An address that is
+  users**, enter every Gmail address you plan to add to Estuary, and **Save**. An address that is
   not on this list is refused with `access_denied`.
 
 ### A5. Create the OAuth client
@@ -105,7 +105,7 @@ app in Testing **UniMail will ask you to sign in to Gmail again every week**. Pi
 1. Open <https://console.cloud.google.com/auth/clients>.
 2. Click **Create client**.
 3. **Application type**: **Desktop app**.
-4. **Name**: `UniMail desktop`.
+4. **Name**: `Estuary desktop`.
 5. Click **Create**.
 
 A dialog shows your **Client ID** and **Client secret**. Copy both now, or click **Download JSON**
@@ -114,22 +114,22 @@ characters afterwards. If you lose it you can always delete the client and creat
 
 > The "client secret" on a desktop client is not really a secret: Google's own documentation says
 > desktop apps cannot keep it confidential, which is exactly why PKCE is mandatory. Paste it into
-> UniMail anyway — Google's token endpoint still wants it — but do not treat it as a credential
+> Estuary anyway — Google's token endpoint still wants it — but do not treat it as a credential
 > worth protecting.
 
-### A6. Put it into UniMail
+### A6. Put it into Estuary
 
-1. In UniMail open **Settings → Accounts → OAuth clients**.
+1. In Estuary open **Settings → Accounts → OAuth clients**.
 2. Paste the **Client ID** and **Client secret** into the Google boxes and save.
 3. **Add account → Gmail → Sign in with Google.**
 4. Your browser opens. Choose your account. If the app is unverified you will see
-   **"Google hasn't verified this app"** — click **Advanced**, then **Go to UniMail (unsafe)**.
+   **"Google hasn't verified this app"** — click **Advanced**, then **Go to Estuary (unsafe)**.
    This warning is about *your own* app; the "unsafe" wording is Google's blanket text for any
    client it has not reviewed.
 5. Approve the request to "Read, compose, send and permanently delete all your email from Gmail"
    (that is what `https://mail.google.com/` means — it is the IMAP/SMTP-equivalent scope; there is
    no narrower scope that permits IMAP).
-6. The tab shows "You can return to UniMail". Close it; the account is added.
+6. The tab shows "You can return to Estuary". Close it; the account is added.
 
 ---
 
@@ -143,11 +143,11 @@ read mail for; a personal account gets a free directory the first time you visit
 1. Open <https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade>
    (or in the Azure portal: <https://portal.azure.com> → search **App registrations**).
 2. Click **+ New registration**.
-3. **Name**: `UniMail`.
+3. **Name**: `Estuary`.
 4. **Supported account types**: **Accounts in any organizational directory (Any Microsoft Entra
    ID tenant – Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)**.
    This is the only option that lets both `@outlook.com` addresses and work/school accounts sign
-   in, and it is what UniMail's `/common` endpoint expects.
+   in, and it is what Estuary's `/common` endpoint expects.
 5. **Redirect URI**: choose platform **Public client/native (mobile & desktop)** from the
    dropdown and enter exactly:
 
@@ -160,9 +160,9 @@ read mail for; a personal account gets a free directory the first time you visit
 ### B2. Copy the Application (client) ID
 
 On the **Overview** page, copy **Application (client) ID** — a GUID like
-`11111111-2222-3333-4444-555555555555`. That is the only value UniMail needs.
+`11111111-2222-3333-4444-555555555555`. That is the only value Estuary needs.
 
-**Do not create a client secret.** UniMail is a public client; a secret would be ignored, and
+**Do not create a client secret.** Estuary is a public client; a secret would be ignored, and
 sending one from a desktop app is a liability, not a protection.
 
 ### B3. Confirm the platform and turn on public client flows
@@ -195,7 +195,7 @@ sending one from a desktop app is a liability, not a protection.
    **Microsoft Graph → Delegated permissions**.
 
 > **Why this step is optional for personal accounts.** Microsoft's v2.0 endpoint uses *dynamic*
-> consent: UniMail asks for
+> consent: Estuary asks for
 > `https://outlook.office.com/IMAP.AccessAsUser.All https://outlook.office.com/SMTP.Send
 > offline_access openid email` in the authorization request itself, and you approve exactly those
 > at sign-in. The API permissions list mainly exists so that an administrator can pre-consent on
@@ -203,7 +203,7 @@ sending one from a desktop app is a liability, not a protection.
 > requires admin consent, this list is what your admin approves — and they may also need to make
 > sure IMAP and authenticated SMTP are enabled for your mailbox in Exchange Online.
 
-### B5. Put it into UniMail
+### B5. Put it into Estuary
 
 1. **Settings → Accounts → OAuth clients**, paste the **Application (client) ID** into the
    Microsoft box (leave the secret field empty) and save.
@@ -219,9 +219,9 @@ If you would rather not create a Google Cloud project, Gmail still accepts a 16-
 
 1. Turn on **2-Step Verification** for your Google Account — app passwords do not exist without
    it: <https://myaccount.google.com/signinoptions/two-step-verification>
-2. Go to <https://myaccount.google.com/apppasswords>, type a name such as `UniMail`, and click
+2. Go to <https://myaccount.google.com/apppasswords>, type a name such as `Estuary`, and click
    **Create**.
-3. Copy the 16 characters (spaces do not matter) and paste them into UniMail's password field.
+3. Copy the 16 characters (spaces do not matter) and paste them into Estuary's password field.
    In **Add account → Gmail** choose **Use an app password** instead of **Sign in with Google**.
 
 Your normal Google password will be rejected; only the app password works. IMAP no longer needs
@@ -252,7 +252,7 @@ registration is missing `http://localhost`, or it was added under the *Web* plat
 *Mobile and desktop applications*. Fix it in **Authentication** (step B3).
 
 **The portal will not let me type `http://127.0.0.1`** — correct, and expected. Use
-`http://localhost`; UniMail handles the rest.
+`http://localhost`; Estuary handles the rest.
 
 **`AADSTS7000218` / "client_assertion or client_secret required"** — **Allow public client flows**
 is still **No**. Set it to Yes (step B3).
@@ -260,15 +260,15 @@ is still **No**. Set it to Yes (step B3).
 **`access_denied` on Google, "This app is blocked"** — your app is in *Testing* and the address is
 not in the Test users list, or you clicked Cancel on the unverified-app warning.
 
-**UniMail asks me to sign in to Gmail again every week** — your Google Auth Platform app is still
+**Estuary asks me to sign in to Gmail again every week** — your Google Auth Platform app is still
 in *Testing*, which caps refresh tokens at 7 days. Publish the app (step A4).
 
 **"Sign in again" out of nowhere** — a refresh token can also be revoked when you change your
 password, remove the app at <https://myaccount.google.com/permissions> or
-<https://account.live.com/consent/Manage>, or leave the account unused for six months. UniMail
+<https://account.live.com/consent/Manage>, or leave the account unused for six months. Estuary
 flags the account and offers **Reconnect**, which reruns the same browser flow.
 
-**Nothing happens when the browser should open** — UniMail hands the URL to your default browser
+**Nothing happens when the browser should open** — Estuary hands the URL to your default browser
 via the OS. If no default browser is set, the sign-in fails immediately with "Could not open the
 system browser".
 
@@ -278,7 +278,7 @@ sign-in, or use an app password for Gmail instead.
 
 **Work or school account, everything configured, still rejected** — your tenant may have IMAP or
 authenticated SMTP disabled per-mailbox, or require admin consent for the Exchange scopes. Both
-are administrator settings in Exchange Online, not something UniMail can change.
+are administrator settings in Exchange Online, not something Estuary can change.
 
 ## Reference
 

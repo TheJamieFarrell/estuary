@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Not found — Estuary</title>
+<link rel="icon" href="/assets/icon.png" type="image/png" />
+<meta name="robots" content="noindex" />
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #15171c; --bg-elev: #1d2027; --fg: #e6e8ee; --fg-muted: #a3a9b6;
+  --border: #2a2e37; --border-strong: #3a3f4b; --accent: #5b8def; --accent-strong: #2f6fed;
+  --glow: radial-gradient(900px 460px at 50% -160px, rgba(91,141,239,.22), transparent 70%);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #f6f7f9; --bg-elev: #ffffff; --fg: #1b1f27; --fg-muted: #5b6270;
+    --border: #e1e4ea; --border-strong: #c9ced8; --accent: #2f6fed; --accent-strong: #2f6fed;
+    --glow: radial-gradient(900px 460px at 50% -180px, rgba(47,111,237,.12), transparent 70%);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: var(--bg);
+  background-image: var(--glow);
+  background-repeat: no-repeat;
+  color: var(--fg);
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  line-height: 1.6;
+  text-align: center;
+}
+img { width: 72px; height: 72px; border-radius: 18px; display: block; margin: 0 auto 24px; }
+h1 { font-size: 30px; letter-spacing: -.02em; margin: 0 0 10px; }
+p { color: var(--fg-muted); margin: 0 auto; max-width: 440px; font-size: 17px; }
+.code { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 650; margin-bottom: 12px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+a.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15.5px;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+a.primary { background: var(--accent-strong); color: #fff; }
+a.secondary { background: var(--bg-elev); color: var(--fg); border-color: var(--border-strong); }
+a.btn:hover { filter: brightness(1.08); }
+</style>
+</head>
+<body>
+<main>
+  <img src="/assets/icon.png" alt="Estuary" />
+  <p class="code">404</p>
+  <h1>That page drifted off</h1>
+  <p>There is nothing at this address. The download and the docs are where you left them.</p>
+  <div class="cta">
+    <a class="btn primary" href="/">Back to estuary.email</a>
+    <a class="btn secondary" href="https://github.com/TheJamieFarrell/estuary">View on GitHub</a>
+  </div>
+</main>
+</body>
+</html>
