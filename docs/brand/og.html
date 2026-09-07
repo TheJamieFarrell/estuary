@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Estuary — social card</title>
+<style>
+  /* Fixed 1200x630 card, rasterised by:
+     node_modules/electron/dist/electron.exe scripts/render-brand.mjs --og docs/brand/og.html
+     → docs/assets/og-image.png                                              */
+  html, body {
+    margin: 0; padding: 0;
+    width: 1200px; height: 630px;
+    overflow: hidden;
+    background: #0b1224;
+  }
+  * { box-sizing: border-box; }
+  .card {
+    position: relative;
+    width: 1200px; height: 630px;
+    overflow: hidden;
+    background: #0b1224;
+    display: flex; align-items: center; gap: 68px;
+    padding: 0 86px;
+    font-family: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    color: #e9efff;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* layered tide gradient */
+  .card::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(680px 520px at 8% 12%,  rgba(47,111,237,.46), transparent 70%),
+      radial-gradient(760px 560px at 92% 24%, rgba(13,42,114,.72), transparent 72%),
+      radial-gradient(900px 520px at 58% 108%, rgba(15,143,184,.42), transparent 70%),
+      radial-gradient(520px 420px at 32% 96%, rgba(49,208,201,.28), transparent 70%);
+  }
+  /* tide lines */
+  .card::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent 0 78px, rgba(150,180,255,.09) 78px 79px);
+    -webkit-mask-image: radial-gradient(120% 80% at 50% 40%, #000 28%, transparent 78%);
+  }
+  .inner { position: relative; z-index: 2; display: flex; align-items: center; gap: 68px; width: 100%; }
+
+  .mark { width: 286px; height: 286px; flex: none; filter: drop-shadow(0 30px 60px rgba(3,8,20,.6)); }
+
+  .copy { min-width: 0; }
+  .name {
+    font-size: 116px; font-weight: 700; letter-spacing: -.05em; line-height: 1;
+    margin: 0; padding: .04em 0 .14em;
+    background: linear-gradient(180deg, #ffffff 32%, #a9e9ea 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tag {
+    margin: 18px 0 0; font-size: 44px; font-weight: 600; letter-spacing: -.03em; color: #31d0c9;
+  }
+  .rule {
+    width: 128px; height: 3px; border-radius: 3px; margin: 34px 0 26px;
+    background: linear-gradient(90deg, #31d0c9, rgba(49,208,201,0));
+  }
+  .sub { margin: 0; font-size: 27px; font-weight: 500; letter-spacing: -.005em; color: #a6b3d1; }
+  .url { margin: 22px 0 0; font-size: 22px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; color: #6f80a6; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="inner">
+
+    <svg class="mark" viewBox="0 0 100 100" width="286" height="286" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="og-sky" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#2f6fed"/><stop offset="1" stop-color="#0d2a72"/></linearGradient>
+        <linearGradient id="og-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#31d0c9"/><stop offset="1" stop-color="#0f8fb8"/></linearGradient>
+        <linearGradient id="og-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f8fb8"/><stop offset="1" stop-color="#0a4f8a"/></linearGradient>
+        <clipPath id="og-tile"><rect width="100" height="100" rx="22"/></clipPath>
+      </defs>
+      <g clip-path="url(#og-tile)">
+        <rect width="100" height="100" fill="url(#og-sky)"/>
+        <circle cx="82" cy="19" r="7.5" fill="#ffffff" opacity=".16"/>
+        <path d="M47 32 L47 58 L28 58 Z" fill="#dbe7ff"/>
+        <path d="M51 16 L51 58 L82 58 Z" fill="#ffffff"/>
+        <path d="M55 30 H61" stroke="#0d2a72" stroke-width="2.4" stroke-linecap="round" opacity=".38"/>
+        <path d="M55 41 H68" stroke="#0d2a72" stroke-width="2.4" stroke-linecap="round" opacity=".38"/>
+        <path d="M55 52 H76" stroke="#0d2a72" stroke-width="2.4" stroke-linecap="round" opacity=".38"/>
+        <path d="M49 14 V60" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M14 60 H86 L78 76 H22 Z" fill="#ffffff"/>
+        <path d="M14 60 H86 L84 64 H16 Z" fill="#c9d8ff" opacity=".9"/>
+        <path d="M-4 70 C10 64 20 76 32 70 S54 64 66 70 S88 76 104 70 V104 H-4 Z" fill="url(#og-sea)"/>
+        <path d="M-4 70 C10 64 20 76 32 70 S54 64 66 70 S88 76 104 70" fill="none" stroke="#ffffff" stroke-width="1.6" opacity=".55"/>
+        <path d="M-4 84 C10 78 20 90 32 84 S54 78 66 84 S88 90 104 84 V104 H-4 Z" fill="url(#og-deep)" opacity=".85"/>
+      </g>
+    </svg>
+
+    <div class="copy">
+      <p class="name">Estuary</p>
+      <p class="tag">Every inbox, one tide.</p>
+      <div class="rule"></div>
+      <p class="sub">Gmail · Outlook · IMAP — one Windows inbox</p>
+      <p class="url">estuary.email</p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

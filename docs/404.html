@@ -4,63 +4,108 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Not found — Estuary</title>
-<link rel="icon" href="/assets/icon.png" type="image/png" />
 <meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="/brand/estuary-mark.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+<meta name="theme-color" content="#0b1224" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#eaf1fb" media="(prefers-color-scheme: light)" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&display=swap" />
 <style>
 :root {
   color-scheme: dark;
-  --bg: #15171c; --bg-elev: #1d2027; --fg: #e6e8ee; --fg-muted: #a3a9b6;
-  --border: #2a2e37; --border-strong: #3a3f4b; --accent: #5b8def; --accent-strong: #2f6fed;
-  --glow: radial-gradient(900px 460px at 50% -160px, rgba(91,141,239,.22), transparent 70%);
+  --bg: #0b1224; --panel: rgba(255,255,255,.045); --panel-2: rgba(255,255,255,.075);
+  --line: rgba(150,180,255,.14); --line-2: rgba(150,180,255,.26);
+  --fg: #e9efff; --fg-muted: #a6b3d1; --fg-faint: #8391b0;
+  --blue-2: #2f6fed; --teal: #31d0c9; --teal-2: #0f8fb8; --accent: #31d0c9; --ring: #57e2dc;
 }
 @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
-    --bg: #f6f7f9; --bg-elev: #ffffff; --fg: #1b1f27; --fg-muted: #5b6270;
-    --border: #e1e4ea; --border-strong: #c9ced8; --accent: #2f6fed; --accent-strong: #2f6fed;
-    --glow: radial-gradient(900px 460px at 50% -180px, rgba(47,111,237,.12), transparent 70%);
+    --bg: #eaf1fb; --panel: rgba(255,255,255,.78); --panel-2: #ffffff;
+    --line: rgba(13,42,114,.14); --line-2: rgba(13,42,114,.26);
+    --fg: #0a1128; --fg-muted: #46587c; --fg-faint: #5a6c8d;
+    --blue-2: #1b57d0; --teal: #0a6f8f; --teal-2: #0f8fb8; --accent: #086a8b; --ring: #0d2a72;
   }
 }
 * { box-sizing: border-box; }
 body {
-  margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 32px;
-  background: var(--bg);
-  background-image: var(--glow);
-  background-repeat: no-repeat;
-  color: var(--fg);
+  margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 32px 24px;
+  background: var(--bg); color: var(--fg); overflow-x: hidden; position: relative; isolation: isolate;
   font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
-  line-height: 1.6;
-  text-align: center;
+  font-size: 17px; line-height: 1.65; text-align: center; -webkit-font-smoothing: antialiased;
 }
-img { width: 72px; height: 72px; border-radius: 18px; display: block; margin: 0 auto 24px; }
-h1 { font-size: 30px; letter-spacing: -.02em; margin: 0 0 10px; }
-p { color: var(--fg-muted); margin: 0 auto; max-width: 440px; font-size: 17px; }
-.code { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 650; margin-bottom: 12px; }
-.cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+.tide { position: fixed; inset: -20% -10%; z-index: -1; pointer-events: none; }
+.tide i { position: absolute; display: block; border-radius: 50%; filter: blur(10px); animation: drift 28s ease-in-out infinite alternate; }
+.tide i:nth-child(1) { inset: -6% 34% 44% -8%; background: radial-gradient(closest-side, rgba(47,111,237,.38), transparent 72%); }
+.tide i:nth-child(2) { inset: 30% -10% 6% 40%; background: radial-gradient(closest-side, rgba(49,208,201,.26), transparent 70%); animation-duration: 34s; animation-delay: -8s; }
+.tide i:nth-child(3) { inset: -18% -6% 62% 46%; background: radial-gradient(closest-side, rgba(13,42,114,.5), transparent 72%); animation-duration: 30s; animation-delay: -3s; }
+@media (prefers-color-scheme: light) {
+  .tide i:nth-child(1) { background: radial-gradient(closest-side, rgba(47,111,237,.2), transparent 72%); }
+  .tide i:nth-child(2) { background: radial-gradient(closest-side, rgba(49,208,201,.24), transparent 70%); }
+  .tide i:nth-child(3) { background: radial-gradient(closest-side, rgba(91,141,239,.18), transparent 72%); }
+}
+@keyframes drift { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(3%,-3%,0) scale(1.1); } }
+.mark { width: clamp(96px, 20vw, 132px); height: auto; margin: 0 auto 26px; overflow: visible;
+  filter: drop-shadow(0 20px 40px rgba(6,14,34,.6)); }
+.mk-boat { transform-box: fill-box; transform-origin: 50% 85%; animation: sail 6.5s ease-in-out infinite; }
+@keyframes sail { 0%,100% { transform: translateY(-.9px) rotate(-1.2deg); } 50% { transform: translateY(1.1px) rotate(1.2deg); } }
+.mk-w1 { animation: flow 9s linear infinite; }
+.mk-w2 { animation: flow 14s linear infinite reverse; }
+@keyframes flow { from { transform: translateX(0); } to { transform: translateX(-40px); } }
+.code { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0 0 12px; }
+h1 { font-family: 'Sora', system-ui, sans-serif; font-size: clamp(30px, 6vw, 46px); letter-spacing: -.04em; line-height: 1.08; margin: 0 0 14px; }
+p.lead { color: var(--fg-muted); margin: 0 auto; max-width: 460px; }
+.cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 30px; }
 a.btn {
-  display: inline-block;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 15.5px;
-  text-decoration: none;
-  border: 1px solid transparent;
+  display: inline-flex; align-items: center; justify-content: center; min-height: 52px;
+  padding: 13px 26px; border-radius: 13px; text-decoration: none;
+  font-family: 'Sora', system-ui, sans-serif; font-size: 16px; font-weight: 600; letter-spacing: -.015em;
+  border: 1px solid transparent; transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
-a.primary { background: var(--accent-strong); color: #fff; }
-a.secondary { background: var(--bg-elev); color: var(--fg); border-color: var(--border-strong); }
-a.btn:hover { filter: brightness(1.08); }
+a.btn:hover { transform: translateY(-2px); }
+a.primary { background: linear-gradient(135deg, var(--blue-2), var(--teal-2) 118%); color: #fff; box-shadow: 0 12px 34px rgba(47,111,237,.36); }
+a.secondary { background: var(--panel); color: var(--fg); border-color: var(--line-2); }
+a.secondary:hover { border-color: var(--accent); background: var(--panel-2); }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  a.btn:hover { transform: none; }
+}
 </style>
 </head>
 <body>
+<div class="tide" aria-hidden="true"><i></i><i></i><i></i></div>
 <main>
-  <img src="/assets/icon.png" alt="Estuary" />
+  <svg class="mark" viewBox="0 0 100 100" role="img" aria-label="The Estuary mark: a paper boat riding level in teal water.">
+    <defs>
+      <linearGradient id="e-sky" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#2f6fed"/><stop offset="1" stop-color="#0d2a72"/></linearGradient>
+      <linearGradient id="e-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#31d0c9"/><stop offset="1" stop-color="#0f8fb8"/></linearGradient>
+      <linearGradient id="e-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f8fb8"/><stop offset="1" stop-color="#0a4f8a"/></linearGradient>
+      <clipPath id="e-tile"><rect width="100" height="100" rx="22"/></clipPath>
+    </defs>
+    <g clip-path="url(#e-tile)">
+      <rect width="100" height="100" fill="url(#e-sky)"/>
+      <circle cx="82" cy="19" r="7.5" fill="#fff" opacity=".16"/>
+      <g class="mk-boat">
+        <path d="M47 32 L47 58 L28 58 Z" fill="#dbe7ff"/>
+        <path d="M51 16 L51 58 L82 58 Z" fill="#fff"/>
+        <path d="M55 30 H61" stroke="#0d2a72" stroke-width="2.4" stroke-linecap="round" opacity=".38"/>
+        <path d="M55 41 H68" stroke="#0d2a72" stroke-width="2.4" stroke-linecap="round" opacity=".38"/>
+        <path d="M55 52 H76" stroke="#0d2a72" stroke-width="2.4" stroke-linecap="round" opacity=".38"/>
+        <path d="M49 14 V60" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M14 60 H86 L78 76 H22 Z" fill="#fff"/>
+        <path d="M14 60 H86 L84 64 H16 Z" fill="#c9d8ff" opacity=".9"/>
+      </g>
+      <g class="mk-w1"><path d="M-40 70 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 V112 H-40 Z" fill="url(#e-sea)"/></g>
+      <g class="mk-w2"><path d="M-40 84 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 V112 H-40 Z" fill="url(#e-deep)" opacity=".85"/></g>
+    </g>
+  </svg>
   <p class="code">404</p>
   <h1>That page drifted off</h1>
-  <p>There is nothing at this address. The download and the docs are where you left them.</p>
+  <p class="lead">There is nothing at this address. The download and the docs are where you left them.</p>
   <div class="cta">
     <a class="btn primary" href="/">Back to estuary.email</a>
     <a class="btn secondary" href="https://github.com/TheJamieFarrell/estuary">View on GitHub</a>
