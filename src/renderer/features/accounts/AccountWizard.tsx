@@ -484,7 +484,7 @@ export function AccountWizard({
                 {oauthProvider === 'google' ? 'Google' : 'Microsoft'} sign-in is not set up yet
               </p>
               <p>
-                UniMail needs your own OAuth client id before it can sign you in. Add one in
+                Estuary needs your own OAuth client id before it can sign you in. Add one in
                 <strong> Settings › Connected apps</strong>, then come back here.
               </p>
               {preset?.id === 'gmail' && (

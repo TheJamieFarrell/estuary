@@ -137,7 +137,7 @@ export function buildImapOptions(server: ServerSettings, credentials: ResolvedAu
       ? { user: credentials.user, accessToken: credentials.accessToken }
       : { user: credentials.user, pass: credentials.pass ?? '' },
     logger: false as const,
-    clientInfo: { name: 'UniMail', version: '0.1.0' },
+    clientInfo: { name: 'Estuary', version: '0.1.0' },
     greetingTimeout: 20_000,
     connectionTimeout: CONNECT_TIMEOUT_MS,
     socketTimeout: role === 'idle' ? 10 * 60_000 : COMMAND_TIMEOUT_MS,

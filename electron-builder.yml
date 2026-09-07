@@ -1,5 +1,5 @@
-appId: com.jamiefarrell.unimail
-productName: UniMail
+appId: com.jamiefarrell.estuary
+productName: Estuary
 directories:
   buildResources: resources
   output: release
@@ -13,25 +13,25 @@ extraResources:
     to: resources
     filter:
       - '**/*'
-  # Personal OAuth client ids (gitignored). Seeds Settings > Connected apps on first run.
-  - from: config/oauth-clients.local.json
-    to: oauth-clients.json
-  # Where the installed app looks for newer builds (see src/main/updater.ts).
-  - from: config/update-source.local.json
-    to: update-source.json
+  # Developer-only seeds (OAuth client ids, update source) staged by scripts/prepare-resources.mjs.
+  # Empty for public builds (ESTUARY_PUBLIC=1).
+  - from: build-resources
+    to: .
+    filter:
+      - '**/*'
 win:
   target:
     - target: nsis
       arch: [x64]
   # electron-builder generates the .ico from this 256px png.
   icon: resources/icon.png
-  artifactName: UniMail-Setup-${version}.${ext}
+  artifactName: Estuary-Setup-${version}.${ext}
 nsis:
   oneClick: false
   perMachine: false
-  # Always install per-user (%LOCALAPPDATA%\Programs\UniMail) so in-app updates never need a UAC prompt.
+  # Always install per-user (%LOCALAPPDATA%\Programs\Estuary) so in-app updates never need a UAC prompt.
   allowElevation: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: always
   createStartMenuShortcut: true
-  shortcutName: UniMail
+  shortcutName: Estuary

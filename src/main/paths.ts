@@ -1,6 +1,6 @@
 /**
- * Filesystem layout. Everything UniMail writes lives under `app.getPath('userData')`
- * (on Windows: %APPDATA%\UniMail).
+ * Filesystem layout. Everything Estuary writes lives under `app.getPath('userData')`
+ * (on Windows: %APPDATA%\Estuary).
  */
 import { app } from 'electron'
 import { mkdirSync } from 'node:fs'
@@ -14,7 +14,7 @@ export function getAppPaths(): AppPaths {
   const userData = app.getPath('userData')
   const paths: AppPaths = {
     userData,
-    dbFile: join(userData, 'unimail.db'),
+    dbFile: join(userData, 'estuary.db'),
     attachmentsDir: join(userData, 'attachments'),
     logsDir: join(userData, 'logs')
   }

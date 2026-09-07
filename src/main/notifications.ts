@@ -99,7 +99,7 @@ export function createNotifier(deps: {
 
       if (fresh.length > MAX_INDIVIDUAL) {
         // A big batch (initial catch-up, a busy list) gets one line instead of a stack of toasts.
-        show('UniMail', `${fresh.length} new messages`, () => goTo(accountId))
+        show('Estuary', `${fresh.length} new messages`, () => goTo(accountId))
         return
       }
 

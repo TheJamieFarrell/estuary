@@ -1,4 +1,4 @@
-/* UniMail design tokens. Both renderer agents share these. Light is the default; dark via [data-theme="dark"]. */
+/* Estuary design tokens. Both renderer agents share these. Light is the default; dark via [data-theme="dark"]. */
 :root {
   --font-sans: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-mono: 'Cascadia Code', Consolas, monospace;

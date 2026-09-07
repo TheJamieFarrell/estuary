@@ -38,7 +38,7 @@ function msg(partial: Partial<MessageUpsert> & { folderId: string; uid: number }
 }
 
 beforeAll(() => {
-  dir = mkdtempSync(join(tmpdir(), 'unimail-db-'))
+  dir = mkdtempSync(join(tmpdir(), 'estuary-db-'))
   store = createMailStore()
   store.open(join(dir, 'mail.db'))
 

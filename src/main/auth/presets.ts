@@ -43,7 +43,7 @@ export const PRESETS: ProviderPreset[] = [
     oauthProvider: 'microsoft',
     help:
       'Microsoft has disabled password (basic) authentication for IMAP and SMTP on personal ' +
-      'Outlook.com, Hotmail and Live accounts, so UniMail has to sign you in with Microsoft. ' +
+      'Outlook.com, Hotmail and Live accounts, so Estuary has to sign you in with Microsoft. ' +
       'Work or school accounts also need OAuth unless your admin has re-enabled basic auth.',
     helpUrl: 'https://support.microsoft.com/en-us/office/pop-imap-and-smtp-settings-8361e398-8af4-4e97-b147-6c6c4ac95353',
     cacheLimit: 5000
@@ -74,7 +74,7 @@ export const PRESETS: ProviderPreset[] = [
     authTypes: ['password'],
     help:
       'iCloud requires an app-specific password. Sign in at account.apple.com, go to ' +
-      'Sign-In and Security > App-Specific Passwords, generate one for UniMail and paste it ' +
+      'Sign-In and Security > App-Specific Passwords, generate one for Estuary and paste it ' +
       'here. Two-factor authentication must be on. The username is your full iCloud address.',
     helpUrl: 'https://support.apple.com/en-us/102654',
     cacheLimit: 5000
@@ -102,7 +102,7 @@ export const PRESETS: ProviderPreset[] = [
     authTypes: ['password'],
     help:
       'Yahoo requires an app password. Go to your Yahoo Account Security page, choose ' +
-      '"Generate and manage app passwords", create one for UniMail and paste it here. Your ' +
+      '"Generate and manage app passwords", create one for Estuary and paste it here. Your ' +
       'normal Yahoo password will be rejected.',
     helpUrl: 'https://login.yahoo.com/account/security/app-passwords',
     cacheLimit: 5000
@@ -129,7 +129,7 @@ export const PRESETS: ProviderPreset[] = [
     smtp: { host: '', port: 465, secure: true },
     authTypes: ['password'],
     help:
-      'Enter the IMAP and SMTP servers from your provider. UniMail will try to find them ' +
+      'Enter the IMAP and SMTP servers from your provider. Estuary will try to find them ' +
       'automatically from your address first.',
     cacheLimit: 5000
   }

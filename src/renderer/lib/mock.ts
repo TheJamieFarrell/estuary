@@ -385,7 +385,7 @@ function seedThreads(): void {
         folderId: folder.id,
         threadId,
         uid: 1000 + i * 10 + m,
-        messageIdHeader: `${id}@unimail.local`,
+        messageIdHeader: `${id}@estuary.local`,
         subject: m === 0 ? subject : `Re: ${subject}`,
         from: [from],
         to,
@@ -415,7 +415,7 @@ function seedThreads(): void {
         references: [],
         attachments: makeAttachments(id, attachmentCount),
         headers: {
-          'message-id': `<${id}@unimail.local>`,
+          'message-id': `<${id}@estuary.local>`,
           from: from.name ? `${from.name} <${from.address}>` : from.address,
           subject,
           date: new Date(baseDate + m * 45 * 60_000).toUTCString(),

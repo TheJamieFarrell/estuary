@@ -198,7 +198,7 @@ function buildQuote(original: MessageFull): string {
   const attribution = `On ${escapeHtml(formatDate(original.date))}, ${escapeHtml(
     formatAddressList(original.from) || 'someone'
   )} wrote:`
-  return `<br><br><div class="unimail-quote">${attribution}<blockquote>${originalBodyHtml(original)}</blockquote></div>`
+  return `<br><br><div class="estuary-quote">${attribution}<blockquote>${originalBodyHtml(original)}</blockquote></div>`
 }
 
 function buildForwardBlock(original: MessageFull): string {
@@ -210,7 +210,7 @@ function buildForwardBlock(original: MessageFull): string {
   ]
   if (original.cc.length) rows.push(`Cc: ${escapeHtml(formatAddressList(original.cc))}`)
   return (
-    '<br><br><div class="unimail-quote">---------- Forwarded message ----------<br>' +
+    '<br><br><div class="estuary-quote">---------- Forwarded message ----------<br>' +
     rows.join('<br>') +
     `<br><br>${originalBodyHtml(original)}</div>`
   )

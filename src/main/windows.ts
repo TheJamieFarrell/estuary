@@ -185,7 +185,7 @@ export function createWindowManager(deps: { getSettings: () => AppSettings }): W
       minHeight: MIN_SIZE.height,
       show: false,
       backgroundColor: OVERLAY[resolvedTheme(currentTheme())].color,
-      title: 'UniMail',
+      title: 'Estuary',
       titleBarStyle: 'hidden',
       titleBarOverlay: overlayFor(currentTheme()),
       autoHideMenuBar: true,

@@ -156,7 +156,7 @@ export function unblockRemoteImages(html: string): string {
 
 /** Wrap a plain-text body as HTML with clickable links. */
 export function plainTextToHtml(text: string): string {
-  return `<pre class="unimail-plain">${linkifyPlainText(text)}</pre>`
+  return `<pre class="estuary-plain">${linkifyPlainText(text)}</pre>`
 }
 
 export interface FrameStyleOptions {
@@ -199,8 +199,8 @@ export function buildEmailSrcDoc(bodyHtml: string, style: FrameStyleOptions): st
     }
     table { max-width: 100% !important; }
     pre, code { font-family: ui-monospace, Consolas, monospace; }
-    pre.unimail-plain { white-space: pre-wrap; word-break: break-word; margin: 0; font-family: inherit; font-size: inherit; }
-    pre.unimail-plain .quote { color: ${style.muted}; }
+    pre.estuary-plain { white-space: pre-wrap; word-break: break-word; margin: 0; font-family: inherit; font-size: inherit; }
+    pre.estuary-plain .quote { color: ${style.muted}; }
     blockquote {
       margin: 8px 0; padding-left: 10px;
       border-left: 2px solid ${style.border};

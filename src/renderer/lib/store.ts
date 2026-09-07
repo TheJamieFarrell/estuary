@@ -516,7 +516,7 @@ export const useStore = create<AppState>((set, get) => ({
 // Browser-only dev convenience: when there is no Electron bridge (plain `vite`), expose the
 // store so the UI can be poked from the console. Never exposed inside the app itself.
 if (typeof window !== 'undefined' && !hasElectronApi()) {
-  ;(window as unknown as { __unimailStore?: typeof useStore }).__unimailStore = useStore
+  ;(window as unknown as { __estuaryStore?: typeof useStore }).__estuaryStore = useStore
 }
 
 // ---------------------------------------------------------------------------

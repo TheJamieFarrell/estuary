@@ -19,8 +19,8 @@ const crlf = (lines: string[]): string => lines.join('\r\n')
 const PLAIN_MESSAGE = crlf([
   'Return-Path: <newsletter@example.com>',
   'From: "Ada Lovelace" <ada@example.com>',
-  'To: Jamie <jamie@unimail.test>, Second <second@unimail.test>',
-  'Cc: cc@unimail.test',
+  'To: Jamie <jamie@estuary.test>, Second <second@estuary.test>',
+  'Cc: cc@estuary.test',
   'Subject: Weekly digest',
   'Date: Tue, 02 Sep 2025 10:11:12 +0000',
   'Message-ID: <plain-1@example.com>',
@@ -37,11 +37,11 @@ const PLAIN_MESSAGE = crlf([
   ''
 ])
 
-const BOUNDARY = 'unimail-boundary-42'
+const BOUNDARY = 'estuary-boundary-42'
 
 const MIXED_MESSAGE = crlf([
   'From: Bob <bob@example.com>',
-  'To: jamie@unimail.test',
+  'To: jamie@estuary.test',
   'Subject: Invoice and logo',
   'Date: Wed, 03 Sep 2025 08:00:00 +0000',
   'Message-ID: <mixed-1@example.com>',
@@ -183,7 +183,7 @@ describe('toMessageUpsert', () => {
           messageId: '<plain-1@example.com>',
           inReplyTo: '<parent-1@example.com>',
           from: [{ name: 'Ada Lovelace', address: 'ada@example.com' }],
-          to: [{ address: 'jamie@unimail.test' }],
+          to: [{ address: 'jamie@estuary.test' }],
           cc: [],
           bcc: []
         },

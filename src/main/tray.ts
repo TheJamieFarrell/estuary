@@ -116,7 +116,7 @@ export function createTray(deps: TrayDeps): TrayController {
     return { setUnread: () => {}, refresh: () => {}, destroy: () => {} }
   }
 
-  tray.setToolTip('UniMail')
+  tray.setToolTip('Estuary')
   tray.on('click', () => deps.windows.toggleMainWindow())
   tray.on('double-click', () => deps.windows.showMainWindow())
 
@@ -130,9 +130,9 @@ export function createTray(deps: TrayDeps): TrayController {
     }
     tray.setContextMenu(
       Menu.buildFromTemplate([
-        { label: unread > 0 ? `UniMail - ${unread} unread` : 'UniMail', enabled: false },
+        { label: unread > 0 ? `Estuary - ${unread} unread` : 'Estuary', enabled: false },
         { type: 'separator' },
-        { label: 'Open UniMail', click: () => deps.windows.showMainWindow() },
+        { label: 'Open Estuary', click: () => deps.windows.showMainWindow() },
         { label: 'New message', accelerator: 'CmdOrCtrl+N', click: () => deps.onCompose() },
         { label: 'Sync now', click: () => deps.onSyncNow() },
         { type: 'separator' },
@@ -144,7 +144,7 @@ export function createTray(deps: TrayDeps): TrayController {
           click: (item) => deps.setSettings({ startOnLogin: item.checked })
         },
         { type: 'separator' },
-        { label: 'Quit UniMail', click: () => app.quit() }
+        { label: 'Quit Estuary', click: () => app.quit() }
       ])
     )
   }
@@ -153,7 +153,7 @@ export function createTray(deps: TrayDeps): TrayController {
     unread = Math.max(0, Math.floor(count) || 0)
     if (!tray) return
     tray.setImage(icon(unread > 0 ? 'tray-unread.png' : 'tray.png'))
-    tray.setToolTip(unread > 0 ? `UniMail - ${unread} unread` : 'UniMail')
+    tray.setToolTip(unread > 0 ? `Estuary - ${unread} unread` : 'Estuary')
     buildMenu()
 
     const win = deps.windows.getMainWindow()

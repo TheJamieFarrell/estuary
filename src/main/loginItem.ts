@@ -1,5 +1,5 @@
 /**
- * "Start UniMail when I sign in". The auto-started copy launches with `--hidden`
+ * "Start Estuary when I sign in". The auto-started copy launches with `--hidden`
  * so it goes straight to the tray instead of popping the inbox open on boot.
  */
 import { app } from 'electron'

@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-  Puts a "UniMail" shortcut on the Desktop.
+  Puts a "Estuary" shortcut on the Desktop.
 
 .DESCRIPTION
-  Points at the installed build (%LOCALAPPDATA%\Programs\UniMail\UniMail.exe) when it
+  Points at the installed build (%LOCALAPPDATA%\Programs\Estuary\Estuary.exe) when it
   exists, otherwise at the unpacked build produced by `npm run dist:dir`
-  (release\win-unpacked\UniMail.exe).
+  (release\win-unpacked\Estuary.exe).
 
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File scripts\create-shortcut.ps1
@@ -21,8 +21,8 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 
 $candidates = @(
-  (Join-Path $env:LOCALAPPDATA 'Programs\UniMail\UniMail.exe'),
-  (Join-Path $projectRoot 'release\win-unpacked\UniMail.exe')
+  (Join-Path $env:LOCALAPPDATA 'Programs\Estuary\Estuary.exe'),
+  (Join-Path $projectRoot 'release\win-unpacked\Estuary.exe')
 )
 
 $target = $null
@@ -32,20 +32,20 @@ foreach ($candidate in $candidates) {
 
 if (-not $target) {
   Write-Error @"
-No UniMail executable found. Looked in:
+No Estuary executable found. Looked in:
   $($candidates -join "`n  ")
 Run 'npm run dist' (installer) or 'npm run dist:dir' (unpacked) first.
 "@
   exit 1
 }
 
-$linkPath = Join-Path $ShortcutDir 'UniMail.lnk'
+$linkPath = Join-Path $ShortcutDir 'Estuary.lnk'
 $shell = New-Object -ComObject WScript.Shell
 $shortcut = $shell.CreateShortcut($linkPath)
 $shortcut.TargetPath = $target
 $shortcut.WorkingDirectory = Split-Path -Parent $target
 $shortcut.IconLocation = "$target,0"
-$shortcut.Description = 'UniMail - all your email in one inbox'
+$shortcut.Description = 'Estuary - all your email in one inbox'
 $shortcut.Save()
 
 Write-Host "Created $linkPath"

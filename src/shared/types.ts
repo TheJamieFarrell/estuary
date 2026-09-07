@@ -1,5 +1,5 @@
 /**
- * UniMail shared domain types.
+ * Estuary shared domain types.
  * This file is the CONTRACT between main-process modules and the renderer.
  * All agents build against these types. Add fields freely, but do not rename or remove
  * anything without updating every consumer.

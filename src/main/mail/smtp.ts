@@ -80,7 +80,7 @@ export function buildMailOptions(account: Account, payload: ComposePayload, orig
     subject: payload.subject ?? '',
     text,
     messageId: `<${randomUUID()}@${domainOf(account.email)}>`,
-    headers: { 'X-Mailer': 'UniMail' },
+    headers: { 'X-Mailer': 'Estuary' },
     attachments: payload.attachments.map(mapAttachment)
   }
   if (html) options.html = html

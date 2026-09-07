@@ -282,7 +282,7 @@
   height: 0;
   pointer-events: none;
 }
-.cw-prose .unimail-signature { color: var(--fg-muted); }
+.cw-prose .estuary-signature { color: var(--fg-muted); }
 
 /* ---- quoted original ---- */
 .cw-quote-block { margin-top: var(--space-3); }

@@ -1,5 +1,5 @@
 /**
- * UniMail mail engine: IMAP sync + IDLE, queued actions, SMTP sending, drafts.
+ * Estuary mail engine: IMAP sync + IDLE, queued actions, SMTP sending, drafts.
  *
  *   const engine = createMailEngine(store, auth, paths)
  *   engine.on('newMail', ...)   // wire to notifications / IPC

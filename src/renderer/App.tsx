@@ -72,7 +72,7 @@ function UpdateBanner(): ReactElement | null {
         <Icons.Download size={15} />
       </span>
       <span className="banner__text">
-        UniMail {info.version} is ready (you have {info.currentVersion}). Updating keeps your accounts signed in and
+        Estuary {info.version} is ready (you have {info.currentVersion}). Updating keeps your accounts signed in and
         restarts the app.
       </span>
       <Button
@@ -120,7 +120,7 @@ function FirstRun(): ReactElement {
         <span className="firstrun__logo">
           <Icons.Mail size={48} />
         </span>
-        <div className="firstrun__title">Welcome to UniMail</div>
+        <div className="firstrun__title">Welcome to Estuary</div>
         <p className="firstrun__desc">
           Bring Gmail, Outlook, Spacemail and any IMAP mailbox into a single inbox. Nothing leaves your machine —
           mail is cached locally and credentials are encrypted by Windows.
@@ -255,7 +255,7 @@ function Shell(): ReactElement {
         ) : null}
         <span className="titlebar__brand">
           <Icons.Mail size={16} />
-          UniMail
+          Estuary
         </span>
         <div className="titlebar__center">{showChrome ? <SearchBar /> : null}</div>
         <div className="titlebar__right">

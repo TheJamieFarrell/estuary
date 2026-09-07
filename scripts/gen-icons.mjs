@@ -1,5 +1,5 @@
 /**
- * Generates the UniMail app / tray icons with zero dependencies.
+ * Generates the Estuary app / tray icons with zero dependencies.
  *
  *   node scripts/gen-icons.mjs
  *

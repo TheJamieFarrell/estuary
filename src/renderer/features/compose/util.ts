@@ -4,8 +4,8 @@
  */
 import type { ComposeAttachment, EmailAddress } from '@shared/types'
 
-export const SIGNATURE_CLASS = 'unimail-signature'
-export const QUOTE_CLASS = 'unimail-quote'
+export const SIGNATURE_CLASS = 'estuary-signature'
+export const QUOTE_CLASS = 'estuary-quote'
 
 /** Reasonably strict address check - good enough for UI validation. */
 const ADDRESS_RE = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]{2,}$/
@@ -91,7 +91,7 @@ export function newContentId(): string {
     typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
       : Math.random().toString(36).slice(2)
-  return `unimail-${rand.replace(/-/g, '')}@unimail.local`
+  return `estuary-${rand.replace(/-/g, '')}@estuary.local`
 }
 
 // ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ function parseFragment(html: string): HTMLDivElement {
 export interface SplitBody {
   /** Everything the user edits. */
   body: string
-  /** The `<div class="unimail-quote">…</div>` block, or '' when there is none. */
+  /** The `<div class="estuary-quote">…</div>` block, or '' when there is none. */
   quote: string
 }
 
@@ -143,7 +143,7 @@ export function wrapSignature(signature: string | undefined): string {
 
 /**
  * Swap the signature block when the From account changes.
- * Only touches the body when it still holds an untouched `.unimail-signature` block;
+ * Only touches the body when it still holds an untouched `.estuary-signature` block;
  * if the user deleted it we leave the body alone rather than re-inserting.
  */
 export function replaceSignature(html: string, nextSignature: string | undefined): string {

@@ -133,11 +133,22 @@ export interface UpdateInfo {
   version: string
   /** Version currently running */
   currentVersion: string
-  /** Absolute path of the installer */
+  /**
+   * Absolute path of the installer. For a local-folder source it already exists; for a remote
+   * source this is where the installer will be downloaded to when the user accepts.
+   */
   installerPath: string
   /** epoch ms the build was produced */
   builtAt?: number
   notes?: string
+  /** Where the update was found: a local folder or a remote manifest URL. */
+  source?: 'dir' | 'url'
+  /** Absolute URL of the installer, when the source is remote. */
+  downloadUrl?: string
+  /** Installer size in bytes, when the manifest declares one. */
+  size?: number
+  /** Base64 SHA-512 of the installer, when the manifest declares one. */
+  sha512?: string
 }
 
 export type IpcEvent = keyof IpcEventMap

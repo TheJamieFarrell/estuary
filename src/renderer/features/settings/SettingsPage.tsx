@@ -216,14 +216,14 @@ export function SettingsPage(): React.JSX.Element {
         </Section>
 
         <Section title="Behaviour">
-          <Row label="Start UniMail when I sign in">
+          <Row label="Start Estuary when I sign in">
             <Toggle
               checked={settings.startOnLogin}
               title="Start on login"
               onChange={(v) => void patch({ startOnLogin: v })}
             />
           </Row>
-          <Row label="Minimise to the tray" description="Closing the window keeps UniMail running in the notification area.">
+          <Row label="Minimise to the tray" description="Closing the window keeps Estuary running in the notification area.">
             <Toggle
               checked={settings.minimizeToTray}
               title="Minimise to tray"
@@ -272,7 +272,7 @@ export function SettingsPage(): React.JSX.Element {
 
         <Section
           title="Connected apps"
-          description="Gmail and Outlook sign-in needs your own OAuth client. You enter it once here; UniMail never sends it anywhere but the provider."
+          description="Gmail and Outlook sign-in needs your own OAuth client. You enter it once here; Estuary never sends it anywhere but the provider."
         >
           <Row label="Google client ID" description="From a Desktop app OAuth client in Google Cloud.">
             <Input
@@ -322,7 +322,7 @@ export function SettingsPage(): React.JSX.Element {
               <li>Copy the Application (client) ID into the field above. No secret is needed.</li>
             </ol>
             <p className="st-help-note">
-              The full walkthrough, including the exact scopes UniMail asks for, is in
+              The full walkthrough, including the exact scopes Estuary asks for, is in
               <code> docs/OAUTH-SETUP.md</code> in the app repository.
             </p>
             <div className="st-help-buttons">
@@ -335,7 +335,7 @@ export function SettingsPage(): React.JSX.Element {
         <Section title="About">
           <Row label="Version">
             <span className="st-about-value">
-              {version ? `UniMail ${version.version}` : '—'}
+              {version ? `Estuary ${version.version}` : '—'}
             </span>
           </Row>
           <Row label="Runtime">
@@ -350,7 +350,7 @@ export function SettingsPage(): React.JSX.Element {
                   .invoke('update:check', undefined)
                   .then((u) => {
                     if (!u) toast.success('You are on the latest build')
-                    else toast.info(`UniMail ${u.version} is ready — use the banner at the top to install it`)
+                    else toast.info(`Estuary ${u.version} is ready — use the banner at the top to install it`)
                   })
                   .catch(() => toast.error('Could not check for updates'))
               }}

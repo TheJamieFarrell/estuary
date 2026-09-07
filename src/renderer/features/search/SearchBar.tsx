@@ -7,7 +7,7 @@ import { selectAccount, useStore } from '@renderer/lib/store'
 import './search.css'
 
 /** id used by the '/' shortcut to focus the field. */
-export const SEARCH_INPUT_ID = 'unimail-search-input'
+export const SEARCH_INPUT_ID = 'estuary-search-input'
 
 interface Hint {
   op: string

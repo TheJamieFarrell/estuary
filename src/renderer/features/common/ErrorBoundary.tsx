@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('[unimail] render error', error, info.componentStack)
+    console.error('[estuary] render error', error, info.componentStack)
   }
 
   render(): ReactNode {

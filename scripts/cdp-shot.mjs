@@ -1,4 +1,4 @@
-// Dev helper: screenshot / evaluate JS in a running UniMail started with --remote-debugging-port=9333
+// Dev helper: screenshot / evaluate JS in a running Estuary started with --remote-debugging-port=9333
 // usage: node scripts/cdp-shot.mjs shot out.png [titleFilter]   |   node scripts/cdp-shot.mjs eval "<js>" [titleFilter]
 const [, , cmd, arg, filter = ''] = process.argv
 const port = process.env.CDP_PORT || '9333'

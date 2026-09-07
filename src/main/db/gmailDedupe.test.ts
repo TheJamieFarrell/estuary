@@ -39,7 +39,7 @@ describe('Gmail All Mail dedupe', () => {
   let trash: string
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'unimail-dedupe-'))
+    dir = mkdtempSync(join(tmpdir(), 'estuary-dedupe-'))
     store = createMailStore()
     store.open(join(dir, 'test.db'))
     const account = store.addAccount({

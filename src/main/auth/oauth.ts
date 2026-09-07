@@ -143,7 +143,7 @@ function resultPage(title: string, body: string, ok: boolean): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UniMail</title>
+<title>Estuary</title>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
@@ -183,7 +183,7 @@ function resultPage(title: string, body: string, ok: boolean): string {
 
 const SUCCESS_PAGE = resultPage(
   'Signed in',
-  'You can return to UniMail and close this tab.',
+  'You can return to Estuary and close this tab.',
   true
 )
 
@@ -191,7 +191,7 @@ function failurePage(message: string): string {
   const safe = message.replace(/[<>&"]/g, (c) =>
     c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : '&quot;'
   )
-  return resultPage('Sign-in failed', `${safe} You can return to UniMail and try again.`, false)
+  return resultPage('Sign-in failed', `${safe} You can return to Estuary and try again.`, false)
 }
 
 // ---------------------------------------------------------------------------
@@ -548,13 +548,13 @@ export function assertMailScopeGranted(provider: OAuthProvider, grantedScope: st
   const granted = grantedScope.split(/\s+/)
   if (provider === 'google' && !granted.includes('https://mail.google.com/')) {
     throw new Error(
-      'Google signed you in but did not grant UniMail access to your mail. Sign in again and make sure the ' +
+      'Google signed you in but did not grant Estuary access to your mail. Sign in again and make sure the ' +
         '"Read, compose, send and permanently delete all your email from Gmail" box is ticked before you click Continue.'
     )
   }
   if (provider === 'microsoft' && !granted.some((s) => /IMAP\.AccessAsUser\.All$/i.test(s))) {
     throw new Error(
-      'Microsoft signed you in but did not grant UniMail IMAP access to your mailbox. Sign in again and accept all the ' +
+      'Microsoft signed you in but did not grant Estuary IMAP access to your mailbox. Sign in again and accept all the ' +
         'requested permissions.'
     )
   }

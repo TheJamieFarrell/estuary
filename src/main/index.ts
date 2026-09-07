@@ -1,5 +1,5 @@
 /**
- * UniMail main entry.
+ * Estuary main entry.
  *
  * Boot order: paths -> logging -> store -> auth -> engine -> IPC -> menu -> tray -> window -> sync.
  * Teardown happens once, in `before-quit`.
@@ -25,14 +25,16 @@ import type { IpcController } from '@main/ipc'
 import { applyLoginItem, launchedHidden } from '@main/loginItem'
 import { seedOAuthClients } from '@main/oauthSeed'
 import { createUpdater } from '@main/updater'
+import { migrateLegacyUserData } from '@main/migrateUserData'
 
-const APP_USER_MODEL_ID = 'com.jamiefarrell.unimail'
+const APP_USER_MODEL_ID = 'com.jamiefarrell.estuary'
 
 app.setAppUserModelId(APP_USER_MODEL_ID)
 
 // Dev/debug: run against a different data directory (and single-instance lock) than the installed app.
-if (process.env.UNIMAIL_USER_DATA) app.setPath('userData', process.env.UNIMAIL_USER_DATA)
+if (process.env.ESTUARY_USER_DATA) app.setPath('userData', process.env.ESTUARY_USER_DATA)
 
+migrateLegacyUserData()
 const paths = getAppPaths()
 
 log.initialize()

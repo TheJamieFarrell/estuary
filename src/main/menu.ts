@@ -66,7 +66,7 @@ export function buildAppMenu(deps: MenuDeps): Menu {
       label: '&Help',
       submenu: [
         {
-          label: 'About UniMail',
+          label: 'About Estuary',
           click: () => {
             const win = deps.windows.getMainWindow()
             const detail = [
@@ -77,8 +77,8 @@ export function buildAppMenu(deps: MenuDeps): Menu {
             ].join('\n')
             const options = {
               type: 'info' as const,
-              title: 'About UniMail',
-              message: 'UniMail',
+              title: 'About Estuary',
+              message: 'Estuary',
               detail: `${detail}\n\nGmail, Outlook, Spacemail and any IMAP account in one inbox.`,
               buttons: ['OK']
             }
