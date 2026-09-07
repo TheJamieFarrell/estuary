@@ -1,7 +1,7 @@
 {
   "name": "estuary",
   "productName": "Estuary",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Estuary - every inbox, one tide. Gmail, Outlook, Spacemail and any IMAP account in one desktop app.",
   "main": "./out/main/index.js",
   "author": "Jamie Farrell",

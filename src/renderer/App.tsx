@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { UpdateInfo } from '@shared/ipc'
 import { Button, IconButton, ToastProvider, useToast } from '@renderer/components/ui'
 import * as Icons from '@renderer/components/icons'
+import { Logo } from '@renderer/components/Logo'
 import { api } from '@renderer/lib/api'
 import { useMediaQuery, useResolvedTheme } from '@renderer/lib/hooks'
 import { useGlobalShortcuts } from '@renderer/lib/shortcuts'
@@ -254,7 +255,7 @@ function Shell(): ReactElement {
           </IconButton>
         ) : null}
         <span className="titlebar__brand">
-          <Icons.Mail size={16} />
+          <Logo size={18} />
           Estuary
         </span>
         <div className="titlebar__center">{showChrome ? <SearchBar /> : null}</div>

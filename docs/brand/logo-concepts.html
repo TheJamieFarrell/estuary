@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Estuary logo concepts</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #0e1118; color: #e6e8ee; font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; padding: 40px 48px 64px; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 6px; }
+  .sub { color: #8a91a0; margin: 0 0 36px; font-size: 14px; }
+  .concept { display: grid; grid-template-columns: 200px 1fr; gap: 28px; padding: 30px 0; border-top: 1px solid #23283a; align-items: start; }
+  .concept h2 { font-size: 17px; margin: 0 0 6px; font-weight: 650; }
+  .concept h2 span { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center; border-radius: 7px; background: #2f6fed; color: #fff; font-size: 13px; margin-right: 10px; }
+  .concept p { margin: 0 0 18px; color: #a3a9b6; font-size: 14px; line-height: 1.5; max-width: 620px; }
+  .row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .sizes { display: flex; align-items: flex-end; gap: 18px; padding: 16px 18px; background: #151925; border-radius: 12px; }
+  .sizes figure { margin: 0; text-align: center; color: #6e7484; font-size: 11px; }
+  .sizes svg { display: block; margin: 0 auto 6px; }
+  .light { background: #f4f6fa; border-radius: 12px; padding: 16px 18px; display: flex; gap: 18px; align-items: flex-end; }
+  .light figure { margin: 0; text-align: center; color: #6b7280; font-size: 11px; }
+  .light svg { display: block; margin: 0 auto 6px; }
+  .lockup { display: flex; align-items: center; gap: 14px; }
+  .word { font-family: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif; font-weight: 650; font-size: 34px; letter-spacing: -0.02em; color: #eef1f7; }
+  .word small { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #5b8def; font-weight: 600; margin-top: 2px; }
+  .tray { background: #1b1f2a; padding: 8px 10px; border-radius: 8px; display: inline-flex; gap: 10px; align-items: center; }
+  .note { margin-top: 36px; padding: 18px 20px; background: #151925; border-radius: 12px; color: #a3a9b6; font-size: 14px; line-height: 1.55; }
+  .note b { color: #e6e8ee; }
+</style>
+</head>
+<body>
+<h1>Estuary — logo directions</h1>
+<p class="sub">An estuary is where rivers meet the sea. Each mark plays on streams converging, tide, or a letter afloat. Every option is shown as the app icon (gradient tile), at tray size, in one colour on light, and locked up with the wordmark.</p>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="tide" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a4fd6"/>
+      <stop offset="1" stop-color="#0a1d4a"/>
+    </linearGradient>
+    <linearGradient id="tide2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f6fed"/>
+      <stop offset="1" stop-color="#0c2a6e"/>
+    </linearGradient>
+    <linearGradient id="foam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7cc7ff"/>
+      <stop offset="1" stop-color="#2ad4c3"/>
+    </linearGradient>
+
+    <!-- A: Confluence -->
+    <symbol id="markA" viewBox="0 0 100 100">
+      <path d="M22 22 C34 34 42 44 49 56" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+      <path d="M78 22 C66 34 58 44 51 56" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+      <path d="M50 54 C50 62 50 70 50 84" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+      <path d="M14 84 C24 76 32 92 44 84 S64 76 76 84 S92 92 100 84" fill="none" stroke="url(#foam)" stroke-width="6" stroke-linecap="round" opacity=".95" transform="translate(-4 4) scale(1.05 1)"/>
+    </symbol>
+    <symbol id="markA-mono" viewBox="0 0 100 100">
+      <path d="M22 22 C34 34 42 44 49 56" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/>
+      <path d="M78 22 C66 34 58 44 51 56" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/>
+      <path d="M50 54 C50 62 50 70 50 84" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+      <path d="M10 88 C20 80 28 96 40 88 S60 80 72 88 S88 96 100 88" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+    </symbol>
+
+    <!-- B: Tide mark -->
+    <symbol id="markB" viewBox="0 0 100 100">
+      <rect x="20" y="26" width="60" height="44" rx="7" fill="#fff"/>
+      <path d="M24 31 L50 53 L76 31" fill="none" stroke="#0c2a6e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M0 68 C14 60 26 78 40 70 S64 60 78 70 S94 78 100 70 V100 H0 Z" fill="#5aa8ff" opacity=".9"/>
+      <path d="M0 80 C14 72 26 90 40 82 S64 72 78 82 S94 90 100 82 V100 H0 Z" fill="#2ad4c3" opacity=".95"/>
+    </symbol>
+    <symbol id="markB-mono" viewBox="0 0 100 100">
+      <rect x="20" y="26" width="60" height="44" rx="7" fill="none" stroke="currentColor" stroke-width="7"/>
+      <path d="M24 31 L50 53 L76 31" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6 80 C18 72 28 90 42 82 S64 72 78 82 S92 90 100 82" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- C: Delta E -->
+    <symbol id="markC" viewBox="0 0 100 100">
+      <path d="M28 24 V76" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+      <path d="M28 28 C40 22 50 34 62 28 S78 22 84 28" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+      <path d="M28 50 C38 44 46 56 56 50 S70 44 76 50" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+      <path d="M28 72 C40 66 50 78 62 72 S78 66 84 72" fill="none" stroke="url(#foam)" stroke-width="13" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="markC-mono" viewBox="0 0 100 100">
+      <path d="M28 24 V76" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/>
+      <path d="M28 28 C40 22 50 34 62 28 S78 22 84 28" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/>
+      <path d="M28 50 C38 44 46 56 56 50 S70 44 76 50" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/>
+      <path d="M28 72 C40 66 50 78 62 72 S78 66 84 72" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- D: Letter boat -->
+    <symbol id="markD" viewBox="0 0 100 100">
+      <path d="M50 24 L50 60 L76 60 Z" fill="#fff" opacity=".92"/>
+      <path d="M50 24 L50 60 L30 60 Z" fill="#dbe7ff" opacity=".95"/>
+      <path d="M16 62 H84 L72 78 H28 Z" fill="#fff"/>
+      <path d="M8 84 C20 76 30 92 42 84 S62 76 74 84 S92 92 100 84" fill="none" stroke="url(#foam)" stroke-width="6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="markD-mono" viewBox="0 0 100 100">
+      <path d="M50 24 L50 60 L76 60 Z" fill="currentColor"/>
+      <path d="M50 24 L50 60 L30 60 Z" fill="currentColor" opacity=".6"/>
+      <path d="M16 62 H84 L72 78 H28 Z" fill="currentColor"/>
+      <path d="M8 86 C20 78 30 94 42 86 S62 78 74 86 S92 94 100 86" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" opacity=".6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<script>
+  const concepts = [
+    { id: 'A', name: 'Confluence', grad: 'tide', blurb: 'Two rivers run in from the corners and merge into one wide channel that flows down into the tide line. Literal estuary, reads as a Y at any size, and the merging streams say “many accounts, one inbox” without drawing an envelope.' },
+    { id: 'B', name: 'Tide Mark', grad: 'tide2', blurb: 'A letter sitting in the water, with two bands of sea rising over its lower edge. Keeps the instant “this is email” read of an envelope but makes it unmistakably Estuary. The waves shift from sky blue to teal, which becomes the brand accent.' },
+    { id: 'C', name: 'Delta E', grad: 'tide', blurb: 'A monogram: the E of Estuary with its three bars drawn as flowing currents, the bottom one turning teal where it meets the sea. Strong at 16 px, works as a favicon and a wordmark initial, and it is unlike any other mail icon.' },
+    { id: 'D', name: 'Letter Boat', grad: 'tide2', blurb: 'A paper boat folded from a letter, riding a wave. Friendlier and more playful than the others, and the boat silhouette stays legible in the tray.' }
+  ];
+  const tile = (id, grad, size) => `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#${grad})"/><use href="#mark${id}" width="100" height="100"/></svg>`;
+  const mono = (id, size, color) => `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="color:${color}"><use href="#mark${id}-mono" width="100" height="100"/></svg>`;
+  document.body.insertAdjacentHTML('beforeend', concepts.map(c => `
+    <section class="concept">
+      <div>${tile(c.id, c.grad, 200)}</div>
+      <div>
+        <h2><span>${c.id}</span>${c.name}</h2>
+        <p>${c.blurb}</p>
+        <div class="row">
+          <div class="sizes">
+            <figure>${tile(c.id, c.grad, 64)}64</figure>
+            <figure>${tile(c.id, c.grad, 32)}32</figure>
+            <figure>${tile(c.id, c.grad, 16)}16</figure>
+            <figure><span class="tray">${mono(c.id, 18, '#dfe4ee')}<span style="font-size:12px;color:#aab1bf">tray</span></span><br>tray</figure>
+          </div>
+          <div class="light">
+            <figure>${mono(c.id, 64, '#0c2a6e')}navy on light</figure>
+            <figure>${mono(c.id, 40, '#2f6fed')}accent</figure>
+          </div>
+          <div class="lockup">${tile(c.id, c.grad, 56)}<div class="word">Estuary<small>every inbox, one tide</small></div></div>
+        </div>
+      </div>
+    </section>`).join(''));
+</script>
+
+<div class="note"><b>How to choose:</b> reply with a letter (A–D). I will refine that mark, generate the app icon, tray icons, favicon and social image from it, restyle the website around it (tide gradient, wave divider, the mark in the hero), and ship it as 0.2.1 so the icon on your desktop changes too. Happy to mix ideas, for example C's monogram with B's water.</div>
+</body>
+</html>
