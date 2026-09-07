@@ -8,7 +8,17 @@ import type { Account, Folder, FolderKind, MessageSummary, SyncState, SyncStatus
 import type { AuthService, FolderUpsert, MailEngineEvents, MailStore, MessageUpsert } from '../contracts'
 import { AccountConnection, classifyError, errorMessage } from './connection'
 import { mapFolders, providerQuirks, type MailboxInfo, type ProviderQuirks } from './providers'
-import { parseFlags, parseMessageSource, toMessageUpsert, type ImapMessageLike } from './parse'
+import {
+  SNIPPET_FETCH_BYTES,
+  parseFlags,
+  parseMessageSource,
+  snippetFromPartialText,
+  toMessageUpsert,
+  type ImapMessageLike
+} from './parse'
+
+/** UIDs per snippet backfill fetch. */
+const SNIPPET_BATCH = 200
 
 const syncLog = log.scope('imap')
 
@@ -383,6 +393,11 @@ export class AccountSyncer {
       }
       for (const folder of folders) {
         if (this.stopped) break
+        try {
+          await this.backfillSnippets(folder)
+        } catch (err) {
+          syncLog.warn(`[${this.account.email}] snippet backfill ${folder.path} failed: ${errorMessage(err)}`)
+        }
         if (!this.quirks.bodyPrefetchKinds.includes(folder.kind)) continue
         try {
           await this.prefetchBodies(folder)
@@ -405,7 +420,9 @@ export class AccountSyncer {
       bodyStructure: true,
       internalDate: true,
       size: true,
-      headers: ['references', 'in-reply-to']
+      headers: ['references', 'in-reply-to'],
+      // First few KB of the body so every list row has a preview without downloading messages.
+      bodyParts: [{ key: 'text', start: 0, maxLength: SNIPPET_FETCH_BYTES }]
     }
     if (gmail) {
       query.labels = true
@@ -546,6 +563,40 @@ export class AccountSyncer {
       this.deps.store.setFolderSyncState(folder.id, { ...current, lowestUid: start })
       if (start <= 1) return
       await sleep(120) // yield: keep the UI and other folders responsive
+    }
+  }
+
+  /**
+   * Rows cached by earlier builds (or whose partial text fetch failed) have no preview text.
+   * Fetch the first few KB of BODY[TEXT] for them in UID batches, newest first.
+   */
+  private async backfillSnippets(folder: Folder): Promise<void> {
+    let guard = 0
+    for (;;) {
+      if (this.stopped || guard++ > 200) return
+      const uids = this.deps.store.listUidsWithoutSnippet(folder.id, SNIPPET_BATCH)
+      if (!uids.length) return
+      const updates: { folderId: string; uid: number; snippet: string }[] = []
+      await this.worker.withMailbox(folder.path, async (client) => {
+        const query = {
+          uid: true,
+          bodyStructure: true,
+          bodyParts: [{ key: 'text', start: 0, maxLength: SNIPPET_FETCH_BYTES }]
+        } as unknown as FetchQuery
+        for await (const message of client.fetch(uids.join(','), query, { uid: true } as unknown as FetchOptions)) {
+          const like = message as unknown as ImapMessageLike
+          if (typeof like.uid !== 'number') continue
+          const snippet = snippetFromPartialText(like.bodyParts?.get('text'), like.bodyStructure)
+          // Mark even empty results so we do not refetch the same message forever.
+          updates.push({ folderId: folder.id, uid: like.uid, snippet: snippet || '​' })
+        }
+      })
+      // UIDs the server did not return (expunged meanwhile) would loop forever; mark them too.
+      const seen = new Set(updates.map((u) => u.uid))
+      for (const uid of uids) if (!seen.has(uid)) updates.push({ folderId: folder.id, uid, snippet: '​' })
+      this.deps.store.setSnippets(updates)
+      this.deps.emit.changed({ accountId: this.accountId, folderId: folder.id, reason: 'sync' })
+      await sleep(80)
     }
   }
 

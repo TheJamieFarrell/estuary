@@ -670,7 +670,10 @@ export function createMailStore(): MailStore {
       snippet: string
       has_attachments: number
     }>(messageId)
-    const snippet = current?.snippet && current.snippet.length > 0 ? current.snippet : makeSnippet(text)
+    // A zero-width space is the "checked, nothing to show" marker left by the snippet backfill;
+    // a real body always wins over it.
+    const existingSnippet = (current?.snippet ?? '').replace(/​/g, '').trim()
+    const snippet = existingSnippet.length > 0 ? current!.snippet : makeSnippet(text)
     run(
       'UPDATE messages SET body_fetched = 1, snippet = ?, has_attachments = ? WHERE id = ?',
       snippet,
@@ -1392,6 +1395,32 @@ export function createMailStore(): MailStore {
       )
         .all<MessageRow>(folderId, Math.max(1, limit))
         .map(toSummary)
+    },
+
+    listUidsWithoutSnippet(folderId: string, limit: number): number[] {
+      return q(
+        "SELECT uid FROM messages WHERE folder_id = ? AND uid > 0 AND snippet = '' AND body_fetched = 0 ORDER BY uid DESC LIMIT ?"
+      )
+        .all<{ uid: number }>(folderId, Math.max(1, limit))
+        .map((r) => Number(r.uid))
+    },
+
+    setSnippets(updates): void {
+      if (!updates.length) return
+      conn().transaction(() => {
+        const dirty = new Set<string>()
+        for (const u of updates) {
+          const row = q('SELECT id, thread_id FROM messages WHERE folder_id = ? AND uid = ?').get<{ id: string; thread_id: string }>(
+            u.folderId,
+            u.uid
+          )
+          if (!row) continue
+          run('UPDATE messages SET snippet = ? WHERE id = ?', u.snippet, row.id)
+          reindexMessage(row.id)
+          dirty.add(row.thread_id)
+        }
+        recomputeThreads(dirty)
+      })()
     },
 
     listMessages(query: MessageListQuery): MessageListResult {

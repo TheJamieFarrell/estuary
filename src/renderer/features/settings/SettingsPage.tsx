@@ -343,6 +343,21 @@ export function SettingsPage(): React.JSX.Element {
               {version ? `Electron ${version.electron} · ${version.platform}` : '—'}
             </span>
           </Row>
+          <Row label="Updates" description="Installs a newer build in place. Accounts, sign-ins and cached mail are kept.">
+            <Button
+              onClick={() => {
+                void api
+                  .invoke('update:check', undefined)
+                  .then((u) => {
+                    if (!u) toast.success('You are on the latest build')
+                    else toast.info(`UniMail ${u.version} is ready — use the banner at the top to install it`)
+                  })
+                  .catch(() => toast.error('Could not check for updates'))
+              }}
+            >
+              Check for updates
+            </Button>
+          </Row>
           <Row label="Logs" description="Useful when reporting a sync problem.">
             <Button onClick={openLogFolder}>Open log folder</Button>
           </Row>

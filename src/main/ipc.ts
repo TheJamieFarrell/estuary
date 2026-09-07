@@ -23,6 +23,7 @@ import type { ComposeInit, WindowManager } from '@main/windows'
 import { openExternalIfSafe } from '@main/windows'
 import type { TrayController } from '@main/tray'
 import type { Notifier } from '@main/notifications'
+import type { Updater } from '@main/updater'
 import { applyLoginItem } from '@main/loginItem'
 import { accountAttachmentsDir } from '@main/paths'
 
@@ -36,6 +37,7 @@ export interface IpcDeps {
   paths: AppPaths
   tray: TrayController
   notifier: Notifier
+  updater: Updater
 }
 
 export interface IpcController {
@@ -227,7 +229,7 @@ function sendTo<E extends IpcEvent>(target: WebContents, event: E, payload: IpcE
 // ---------------------------------------------------------------------------
 
 export function registerIpc(deps: IpcDeps): IpcController {
-  const { store, engine, auth, windows, paths, tray, notifier } = deps
+  const { store, engine, auth, windows, paths, tray, notifier, updater } = deps
 
   // -- broadcast + unread -----------------------------------------------------
 
@@ -641,8 +643,12 @@ export function registerIpc(deps: IpcDeps): IpcController {
   handle('app:version', () => ({
     version: app.getVersion(),
     electron: process.versions.electron,
-    platform: process.platform
+    platform: process.platform,
+    logPath: paths.logsDir
   }))
+
+  handle('update:check', () => updater.check())
+  handle('update:install', () => updater.install())
 
   handle('app:pickDirectory', async (_req, event) => {
     const win = BrowserWindow.fromWebContents(event.sender)

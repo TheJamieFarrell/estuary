@@ -354,7 +354,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   notificationSound: true,
   startOnLogin: false,
   minimizeToTray: true,
-  loadRemoteImages: false,
+  loadRemoteImages: true,
   pollIntervalSec: 300,
   markReadDelayMs: 1500,
   oauthClients: {},

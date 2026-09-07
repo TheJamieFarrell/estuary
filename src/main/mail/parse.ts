@@ -6,6 +6,7 @@
  * (they match imapflow's FetchMessageObject but keep this module dependency free).
  */
 import { simpleParser } from 'mailparser'
+import iconv from 'iconv-lite'
 import type { AttachmentMeta, EmailAddress, MessageFlags } from '@shared/types'
 import type { MessageBody, MessageUpsert } from '../contracts'
 
@@ -63,6 +64,8 @@ export interface ImapMessageLike {
   source?: Buffer | string
   /** Raw header block when the fetch asked for specific headers */
   headers?: Buffer | string
+  /** Requested body parts, e.g. a partial BODY[TEXT] used for list snippets */
+  bodyParts?: Map<string, Buffer>
 }
 
 // ---------------------------------------------------------------------------
@@ -207,6 +210,12 @@ export function hasAttachments(structure: ImapBodyStructure | undefined): boolea
 // ---------------------------------------------------------------------------
 
 const ENTITIES: Record<string, string> = {
+  zwnj: '',
+  zwj: '',
+  shy: '',
+  ensp: ' ',
+  emsp: ' ',
+  thinsp: ' ',
   amp: '&',
   lt: '<',
   gt: '>',
@@ -239,6 +248,8 @@ export function htmlToText(html: string): string {
     html
       .replace(/<!--[\s\S]*?-->/g, ' ')
       .replace(/<(script|style|head|title)[\s\S]*?<\/\1>/gi, ' ')
+      // Hidden "preheader" blocks newsletters stuff with padding characters
+      .replace(/<([a-z][a-z0-9]*)\b[^>]*display\s*:\s*none[^>]*>[\s\S]*?<\/\1>/gi, ' ')
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<\/(p|div|tr|li|h[1-6]|table|blockquote)>/gi, '\n')
       .replace(/<li[^>]*>/gi, '- ')
@@ -258,6 +269,8 @@ export function makeSnippet(input: { text?: string; html?: string }, length = SN
   const source = input.text && input.text.trim().length ? input.text : input.html ? htmlToText(input.html) : ''
   const collapsed = decodeEntities(source)
     .replace(/^\s*>.*$/gm, '') // drop quoted lines
+    .replace(/[[(<]?\s*https?:\/\/[^\s\])>]+\s*[\])>]?/g, ' ') // bare/bracketed links say nothing in a preview
+    .replace(/‌|​|­|﻿/g, '') // zero-width "preheader" padding used by newsletters
     .replace(/\s+/g, ' ')
     .trim()
   if (collapsed.length <= length) return collapsed
@@ -334,8 +347,134 @@ export function toMessageUpsert(ctx: UpsertContext, msg: ImapMessageLike): Messa
     flags: parseFlags(msg.flags),
     hasAttachments: hasAttachments(msg.bodyStructure),
     size: typeof msg.size === 'number' ? msg.size : 0,
-    labels: toArray(msg.labels)
+    labels: toArray(msg.labels),
+    snippet: snippetFromPartialText(msg.bodyParts?.get('text'), msg.bodyStructure) || undefined
   }
+}
+
+// ---------------------------------------------------------------------------
+// Partial BODY[TEXT] -> snippet (cheap list previews without downloading bodies)
+// ---------------------------------------------------------------------------
+
+/** How many bytes of BODY[TEXT] the sync fetches per message purely for the list preview. */
+export const SNIPPET_FETCH_BYTES = 4096
+
+function decodeQuotedPrintable(text: string): Buffer {
+  const joined = text.replace(/=\r?\n/g, '')
+  const bytes: number[] = []
+  for (let i = 0; i < joined.length; i++) {
+    const ch = joined.charCodeAt(i)
+    if (ch === 0x3d /* = */ && i + 2 < joined.length && /^[0-9a-f]{2}$/i.test(joined.slice(i + 1, i + 3))) {
+      bytes.push(parseInt(joined.slice(i + 1, i + 3), 16))
+      i += 2
+    } else {
+      bytes.push(ch & 0xff)
+    }
+  }
+  return Buffer.from(bytes)
+}
+
+function decodeBase64Partial(text: string): Buffer {
+  const clean = text.replace(/[^A-Za-z0-9+/=]/g, '')
+  // Complete data keeps its '=' padding; a truncated fetch is cut back to whole 4-char groups.
+  const usable = clean.endsWith('=') ? clean : clean.slice(0, clean.length - (clean.length % 4))
+  return Buffer.from(usable, 'base64')
+}
+
+function decodeCharset(buf: Buffer, charset: string | undefined): string {
+  const cs = (charset ?? 'utf-8').toLowerCase().replace(/^"|"$/g, '')
+  try {
+    if (/^(utf-?8|us-?ascii|ascii)$/.test(cs)) return buf.toString('utf8')
+    if (iconv.encodingExists(cs)) return iconv.decode(buf, cs)
+  } catch {
+    /* fall through */
+  }
+  return buf.toString('utf8')
+}
+
+interface TextCandidate {
+  content: string
+  type: string
+  encoding: string
+  charset?: string
+}
+
+function headerParam(head: string, name: string, param: string): string | undefined {
+  const line = new RegExp(`^${name}:\\s*([^\\r\\n]*(?:\\r?\\n[ \\t][^\\r\\n]*)*)`, 'im').exec(head)?.[1]
+  if (!line) return undefined
+  const m = new RegExp(`${param}\\s*=\\s*"?([^";\\r\\n]+)"?`, 'i').exec(line)
+  return m?.[1]?.trim()
+}
+
+function headerValue(head: string, name: string): string | undefined {
+  return new RegExp(`^${name}:\\s*([^;\\r\\n]+)`, 'im').exec(head)?.[1]?.trim().toLowerCase()
+}
+
+/** Walk a (possibly truncated) MIME body and return the first text/* part, plain preferred. */
+function pickTextPart(body: string, boundary: string | undefined, depth = 0): TextCandidate | undefined {
+  if (!boundary || depth > 4) return undefined
+  const chunks = body.split(`--${boundary}`)
+  let html: TextCandidate | undefined
+  for (const chunk of chunks.slice(1)) {
+    if (chunk.startsWith('--')) break // closing boundary
+    const sep = chunk.search(/\r?\n\r?\n/)
+    if (sep < 0) continue
+    const head = chunk.slice(0, sep)
+    const content = chunk.slice(sep).replace(/^\r?\n\r?\n/, '')
+    const type = headerValue(head, 'content-type') ?? 'text/plain'
+    if (type.startsWith('multipart/')) {
+      const found = pickTextPart(content, headerParam(head, 'content-type', 'boundary'), depth + 1)
+      if (found?.type === 'text/plain') return found
+      html = html ?? found
+      continue
+    }
+    if (!type.startsWith('text/')) continue
+    if (/attachment/i.test(headerValue(head, 'content-disposition') ?? '')) continue
+    const candidate: TextCandidate = {
+      content,
+      type,
+      encoding: headerValue(head, 'content-transfer-encoding') ?? '7bit',
+      charset: headerParam(head, 'content-type', 'charset')
+    }
+    if (type === 'text/plain') return candidate
+    html = html ?? candidate
+  }
+  return html
+}
+
+/**
+ * Turn the first few KB of BODY[TEXT] into a list snippet. For single part messages the
+ * BODYSTRUCTURE tells us type/encoding/charset; for multipart the part headers inside the
+ * text do. Truncated quoted-printable / base64 tails are tolerated.
+ */
+export function snippetFromPartialText(raw: Buffer | string | undefined, structure?: ImapBodyStructure): string {
+  if (!raw || raw.length === 0) return ''
+  const latin = Buffer.isBuffer(raw) ? raw.toString('latin1') : raw
+  const rootType = (structure?.type ?? 'text/plain').toLowerCase()
+  let candidate: TextCandidate | undefined
+  if (rootType.startsWith('multipart/')) {
+    const boundary = structure?.parameters?.boundary ?? /--([^\r\n]+)\r?\n/.exec(latin)?.[1]
+    candidate = pickTextPart(latin, boundary)
+  } else if (rootType.startsWith('text/')) {
+    candidate = {
+      content: latin,
+      type: rootType,
+      encoding: (structure?.encoding ?? '7bit').toLowerCase(),
+      charset: structure?.parameters?.charset
+    }
+  }
+  if (!candidate) return ''
+  const enc = candidate.encoding.toLowerCase()
+  const bytes =
+    enc === 'quoted-printable'
+      ? decodeQuotedPrintable(candidate.content)
+      : enc === 'base64'
+        ? decodeBase64Partial(candidate.content)
+        : Buffer.from(candidate.content, 'latin1')
+  const text = decodeCharset(bytes, candidate.charset)
+  // A truncated fetch may end mid-tag; drop the dangling fragment before stripping tags.
+  const cleaned = candidate.type === 'text/html' ? htmlToText(text.replace(/<[^>]*$/, '')) : text
+  return makeSnippet({ text: cleaned })
 }
 
 // ---------------------------------------------------------------------------

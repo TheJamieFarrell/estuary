@@ -96,7 +96,11 @@ export interface IpcInvokeMap {
   'settings:set': { req: Partial<AppSettings>; res: AppSettings }
   'app:openExternal': { req: { url: string }; res: void }
   'app:showItemInFolder': { req: { path: string }; res: void }
-  'app:version': { req: void; res: { version: string; electron: string; platform: string } }
+  'app:version': { req: void; res: { version: string; electron: string; platform: string; logPath?: string } }
+  /** Look for a newer build in the configured update source. */
+  'update:check': { req: void; res: UpdateInfo | null }
+  /** Run the downloaded installer silently and restart. Accounts and mail are kept. */
+  'update:install': { req: void; res: { ok: boolean; error?: string } }
   'app:pickDirectory': { req: void; res: string | null }
   /** Contact autocomplete from previously seen addresses */
   'contacts:suggest': { req: { q: string; limit?: number }; res: { name?: string; address: string; count: number }[] }
@@ -120,6 +124,20 @@ export interface IpcEventMap {
   'nav:goto': { view: 'inbox' | 'thread' | 'settings' | 'accounts'; threadId?: string; accountId?: string }
   /** compose window only: main asks the window to close after a successful send */
   'compose:close': void
+  /** A newer build is waiting in the update source. */
+  'update:available': UpdateInfo
+}
+
+export interface UpdateInfo {
+  /** Version of the build waiting to be installed */
+  version: string
+  /** Version currently running */
+  currentVersion: string
+  /** Absolute path of the installer */
+  installerPath: string
+  /** epoch ms the build was produced */
+  builtAt?: number
+  notes?: string
 }
 
 export type IpcEvent = keyof IpcEventMap

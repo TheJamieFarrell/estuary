@@ -24,10 +24,14 @@ import { registerIpc } from '@main/ipc'
 import type { IpcController } from '@main/ipc'
 import { applyLoginItem, launchedHidden } from '@main/loginItem'
 import { seedOAuthClients } from '@main/oauthSeed'
+import { createUpdater } from '@main/updater'
 
 const APP_USER_MODEL_ID = 'com.jamiefarrell.unimail'
 
 app.setAppUserModelId(APP_USER_MODEL_ID)
+
+// Dev/debug: run against a different data directory (and single-instance lock) than the installed app.
+if (process.env.UNIMAIL_USER_DATA) app.setPath('userData', process.env.UNIMAIL_USER_DATA)
 
 const paths = getAppPaths()
 
@@ -138,6 +142,11 @@ async function bootstrap(): Promise<void> {
       onOpenSettings: openSettings
     })
 
+    const updater = createUpdater({
+      onAvailable: (info) => ipc?.broadcast('update:available', info),
+      beforeInstall: () => windows.setQuitting(true)
+    })
+
     ipc = registerIpc({
       store: mailStore,
       engine: mailEngine,
@@ -145,8 +154,10 @@ async function bootstrap(): Promise<void> {
       windows,
       paths,
       tray,
-      notifier
+      notifier,
+      updater
     })
+    if (app.isPackaged) updater.start()
 
     installAppMenu({ windows, onCompose: openCompose, onOpenSettings: openSettings, onSyncNow: syncNow })
 

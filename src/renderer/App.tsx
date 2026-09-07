@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { UpdateInfo } from '@shared/ipc'
 import { Button, IconButton, ToastProvider, useToast } from '@renderer/components/ui'
 import * as Icons from '@renderer/components/icons'
 import { api } from '@renderer/lib/api'
@@ -45,6 +46,53 @@ function AuthErrorBanner(): ReactElement | null {
         Reconnect
       </Button>
       <IconButton title="Dismiss" size="sm" onClick={() => dismiss(first.accountId)}>
+        <Icons.Close size={13} />
+      </IconButton>
+    </div>
+  )
+}
+
+function UpdateBanner(): ReactElement | null {
+  const [info, setInfo] = useState<UpdateInfo | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const toast = useToast()
+  useEffect(() => {
+    const off = api.on('update:available', (u) => {
+      setInfo(u)
+      setHidden(false)
+    })
+    void api.invoke('update:check', undefined).then((u) => u && setInfo(u)).catch(() => undefined)
+    return off
+  }, [])
+  if (!info || hidden) return null
+  return (
+    <div className="banner banner--info" role="status">
+      <span className="banner__icon">
+        <Icons.Download size={15} />
+      </span>
+      <span className="banner__text">
+        UniMail {info.version} is ready (you have {info.currentVersion}). Updating keeps your accounts signed in and
+        restarts the app.
+      </span>
+      <Button
+        size="sm"
+        variant="primary"
+        loading={busy}
+        onClick={() => {
+          setBusy(true)
+          void api
+            .invoke('update:install', undefined)
+            .then((r) => {
+              if (!r.ok) toast.error(r.error ?? 'Could not start the update')
+            })
+            .catch((e: unknown) => toast.error(e instanceof Error ? e.message : String(e)))
+            .finally(() => setBusy(false))
+        }}
+      >
+        Update now
+      </Button>
+      <IconButton title="Later" size="sm" onClick={() => setHidden(true)}>
         <Icons.Close size={13} />
       </IconButton>
     </div>
@@ -230,6 +278,7 @@ function Shell(): ReactElement {
 
       <AuthErrorBanner />
       <OfflineBanner />
+      <UpdateBanner />
       {bootError ? (
         <div className="banner banner--warning" role="alert">
           <span className="banner__icon">

@@ -16,7 +16,7 @@
 import { log } from './log'
 import type { SqlDatabase } from './sqlite'
 
-export const SCHEMA_VERSION = 2
+export const SCHEMA_VERSION = 3
 
 interface Migration {
   version: number
@@ -260,6 +260,18 @@ const migrations: Migration[] = [
               AND b.folder_id <> a.folder_id AND fb.kind <> 'all'
           )
         )
+      `)
+    }
+  },
+  {
+    version: 3,
+    name: 'remote images on by default',
+    up(db) {
+      // Blocked images made every newsletter look broken. Load them by default; the Privacy setting
+      // still turns this off. Only touches the stored blob if the key exists.
+      db.exec(`
+        UPDATE settings SET value_json = json_set(value_json, '$.loadRemoteImages', json('true'))
+        WHERE key = 'app' AND json_valid(value_json)
       `)
     }
   }

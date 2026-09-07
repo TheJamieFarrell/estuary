@@ -165,6 +165,10 @@ export interface MailStore {
   listUids(folderId: string): number[]
   /** Messages in a folder lacking bodies, newest first (for body prefetch) */
   listMessagesWithoutBody(folderId: string, limit: number): MessageSummary[]
+  /** Real (positive) UIDs in a folder whose list preview is still empty, newest first */
+  listUidsWithoutSnippet(folderId: string, limit: number): number[]
+  /** Set preview text for messages by (folder, uid); no-op for unknown rows */
+  setSnippets(updates: { folderId: string; uid: number; snippet: string }[]): void
   listMessages(query: MessageListQuery): MessageListResult
   getThread(threadId: string): MessageFull[]
   getThreadSummary(threadId: string): ThreadSummary | undefined

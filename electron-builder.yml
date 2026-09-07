@@ -16,6 +16,9 @@ extraResources:
   # Personal OAuth client ids (gitignored). Seeds Settings > Connected apps on first run.
   - from: config/oauth-clients.local.json
     to: oauth-clients.json
+  # Where the installed app looks for newer builds (see src/main/updater.ts).
+  - from: config/update-source.local.json
+    to: update-source.json
 win:
   target:
     - target: nsis
@@ -26,6 +29,8 @@ win:
 nsis:
   oneClick: false
   perMachine: false
+  # Always install per-user (%LOCALAPPDATA%\Programs\UniMail) so in-app updates never need a UAC prompt.
+  allowElevation: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: always
   createStartMenuShortcut: true

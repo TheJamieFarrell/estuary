@@ -954,6 +954,8 @@ export function createMockApi(): RendererApi {
     },
     'app:showItemInFolder': () => undefined,
     'app:version': () => ({ version: '0.1.0-mock', electron: 'browser', platform: 'win32' }),
+    'update:check': () => null,
+    'update:install': () => ({ ok: false, error: 'Updates are not available in the browser mock.' }),
     'app:pickDirectory': async () => {
       await delay(200)
       return 'C:/Users/mock/Downloads'

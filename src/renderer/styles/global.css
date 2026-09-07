@@ -129,6 +129,8 @@ img { max-width: 100%; }
 .banner--warning { background: color-mix(in srgb, var(--warning) 14%, var(--bg-elev)); color: var(--fg); }
 .banner--danger { background: color-mix(in srgb, var(--danger) 12%, var(--bg-elev)); color: var(--fg); }
 .banner--muted { background: var(--bg-sunken); color: var(--fg-muted); }
+.banner--info { background: color-mix(in srgb, var(--accent) 14%, var(--bg-elev)); color: var(--fg); }
+.banner--info .banner__icon { color: var(--accent); }
 .banner__text { flex: 1; }
 .banner__icon { display: inline-flex; flex: none; }
 .banner--warning .banner__icon { color: var(--warning); }

@@ -32,13 +32,18 @@ export function Modal({
 }: ModalProps): ReactElement | null {
   const ref = useRef<HTMLDivElement>(null)
   const restoreTo = useRef<HTMLElement | null>(null)
+  // Callers usually pass an inline `onClose`, so keep the latest one in a ref: the focus/keyboard
+  // effect below must run only when the modal opens, never on every parent re-render (that used
+  // to yank focus to the close button while the user was typing).
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!open) return
       if (e.key === 'Escape') {
         e.stopPropagation()
-        onClose()
+        onCloseRef.current()
         return
       }
       if (e.key === 'Tab' && ref.current) {
@@ -57,7 +62,7 @@ export function Modal({
         }
       }
     },
-    [open, onClose]
+    [open]
   )
 
   useEffect(() => {
@@ -65,7 +70,11 @@ export function Modal({
     restoreTo.current = document.activeElement as HTMLElement | null
     document.addEventListener('keydown', onKeyDown, true)
     const t = window.setTimeout(() => {
-      const node = ref.current?.querySelector<HTMLElement>(FOCUSABLE)
+      // Only steal focus if nothing inside the dialog has it yet.
+      if (ref.current?.contains(document.activeElement)) return
+      const nodes = Array.from(ref.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])
+      // Prefer the first text field over the header close button.
+      const node = nodes.find((n) => n.matches('input,textarea,select')) ?? nodes[0]
       if (node) node.focus()
       else ref.current?.focus()
     }, 0)

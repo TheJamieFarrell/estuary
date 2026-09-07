@@ -69,7 +69,8 @@ export function sanitizeEmailHtml(dirty: string, opts: SanitizeOptions = {}): Sa
         node.removeAttribute('src')
       } else if (isRemote(src) && !opts.allowRemoteImages) {
         node.setAttribute('data-blocked-src', src)
-        node.removeAttribute('src')
+        // A transparent pixel keeps the layout and avoids the browser's broken-image glyph.
+        node.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
         blocked++
       }
     }
