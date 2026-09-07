@@ -197,7 +197,16 @@ export const useStore = create<AppState>((set, get) => ({
     api.on('mail:changed', scheduleRefresh)
     api.on('mail:new', scheduleRefresh)
     api.on('sync:status', (status) => {
-      set((s) => ({ syncStatuses: { ...s.syncStatuses, [status.accountId]: status } }))
+      set((s) => {
+        const next: Partial<AppState> = { syncStatuses: { ...s.syncStatuses, [status.accountId]: status } }
+        // A connection that is syncing or listening again has clearly re-authenticated.
+        if ((status.state === 'syncing' || status.state === 'listening') && s.authErrors[status.accountId]) {
+          const authErrors = { ...s.authErrors }
+          delete authErrors[status.accountId]
+          next.authErrors = authErrors
+        }
+        return next
+      })
     })
     api.on('accounts:changed', ({ accounts }) => {
       set({ accounts })

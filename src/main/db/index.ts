@@ -44,7 +44,7 @@ import type {
   PendingAction
 } from '../contracts'
 import { log } from './log'
-import { hasFts, migrate } from './schema'
+import { currentVersion, hasFts, migrate } from './schema'
 import { decryptJson, decryptSecret, encryptJson, encryptSecret, isEncryptionAvailable } from './secrets'
 import { parseSearchQuery } from './searchParser'
 import { openDatabase, type SqlDatabase, type SqlParam, type SqlStatement } from './sqlite'
@@ -523,6 +523,39 @@ export function createMailStore(): MailStore {
     for (const id of new Set(ids)) recomputeThread(id)
   }
 
+  /**
+   * Rows that vanished from a folder on the server. On Gmail a message leaving INBOX (archived)
+   * still exists in All Mail, so instead of deleting it we park it in the All Mail folder on a
+   * placeholder uid; the next All Mail sync adopts the placeholder (see upsertOne). Messages
+   * leaving Trash/Spam or All Mail itself are really gone. Returns the number of rows affected.
+   */
+  function removeOrDemote(folderId: string, where: string, ...params: SqlParam[]): number {
+    const folder = folderRow(folderId)
+    const allFolder =
+      folder && folder.kind !== 'all' && folder.kind !== 'trash' && folder.kind !== 'spam'
+        ? q("SELECT id FROM folders WHERE account_id = ? AND kind = 'all' LIMIT 1").get<{ id: string }>(folder.account_id)
+        : undefined
+    let affected = 0
+    if (allFolder) {
+      const rows = q(`SELECT id, gm_msgid FROM messages WHERE ${where}`).all<{ id: string; gm_msgid: string | null }>(...params)
+      for (const row of rows) {
+        if (!row.gm_msgid) continue
+        const dup = q('SELECT id FROM messages WHERE account_id = ? AND gm_msgid = ? AND id <> ? LIMIT 1').get<{ id: string }>(
+          folder!.account_id,
+          row.gm_msgid,
+          row.id
+        )
+        if (dup) continue // another folder still holds it; plain delete below is right
+        const min = q('SELECT MIN(uid) AS m FROM messages WHERE folder_id = ?').get<{ m: number | null }>(allFolder.id)
+        const uid = Math.min(-1, Number(min?.m ?? 0) - 1)
+        run('UPDATE messages SET folder_id = ?, uid = ? WHERE id = ?', allFolder.id, uid, row.id)
+        affected += 1
+      }
+    }
+    const res = q(`DELETE FROM messages WHERE ${where}`).run(...params) as { changes?: number | bigint }
+    return affected + Number(res?.changes ?? 0)
+  }
+
   function threadIdsForMessages(where: string, ...params: SqlParam[]): string[] {
     return q(`SELECT DISTINCT thread_id FROM messages WHERE ${where}`)
       .all<{ thread_id: string }>(...params)
@@ -671,6 +704,26 @@ export function createMailStore(): MailStore {
       if (placeholder) {
         run('UPDATE messages SET uid = ? WHERE id = ?', msg.uid, placeholder.id)
         existing = { ...placeholder, uid: msg.uid }
+      }
+    }
+
+    if (!existing && msg.gmMsgid) {
+      // Gmail: one physical message, many labels. "[Gmail]/All Mail" mirrors every other folder, so a
+      // message must never exist as two rows. The copy in a real folder (INBOX, Sent, ...) wins.
+      const twin = q(
+        `SELECT m.*, f.kind AS twin_kind FROM messages m JOIN folders f ON f.id = m.folder_id
+         WHERE m.account_id = ? AND m.gm_msgid = ? AND m.folder_id <> ? LIMIT 1`
+      ).get<MessageRow & { twin_kind: string }>(accountId, msg.gmMsgid, msg.folderId)
+      if (twin) {
+        if (folder.kind === 'all') {
+          // The All Mail mirror of a message we already hold elsewhere: nothing to add.
+          return { message: toSummary(twin), isNew: false }
+        }
+        if (twin.twin_kind === 'all') {
+          // Previously only known from All Mail (archived); it is now in a real folder, so move it there.
+          run('UPDATE messages SET folder_id = ?, uid = ? WHERE id = ?', msg.folderId, msg.uid, twin.id)
+          existing = { ...twin, folder_id: msg.folderId, uid: msg.uid }
+        }
       }
     }
 
@@ -928,8 +981,15 @@ export function createMailStore(): MailStore {
       if (db) return
       db = openDatabase(dbPath)
       stmts.clear()
+      const before = currentVersion(db)
       const version = migrate(db)
       ftsEnabled = hasFts(db)
+      if (before > 0 && before < 2) {
+        // Migration 2 removed duplicate rows; thread counters must be rebuilt once.
+        const ids = q('SELECT id FROM threads').all<{ id: string }>().map((r) => r.id)
+        conn().transaction(() => recomputeThreads(ids))()
+        log.info(`rebuilt ${ids.length} thread summaries after migration`)
+      }
       log.info(
         `store open: schema v${version}, fts=${ftsEnabled ? 'on' : 'off'}, ` +
           `secrets=${isEncryptionAvailable() ? 'safeStorage' : 'PLAINTEXT (safeStorage unavailable)'}`
@@ -1017,7 +1077,8 @@ export function createMailStore(): MailStore {
       if (patch.cacheLimit !== undefined) set('cache_limit', patch.cacheLimit)
       if (patch.enabled !== undefined) set('enabled', patch.enabled ? 1 : 0)
       if (patch.lastSyncAt !== undefined) set('last_sync_at', patch.lastSyncAt)
-      if (patch.lastError !== undefined) set('last_error', patch.lastError ?? null)
+      // `lastError: undefined` means "clear it" (a successful sync), so test key presence, not value.
+      if ('lastError' in patch) set('last_error', patch.lastError ?? null)
       if (patch.password !== undefined) set('secret_enc', patch.password ? encryptSecret(patch.password) : null)
       if (patch.oauth !== undefined) set('oauth_enc', patch.oauth ? encryptJson(patch.oauth) : null)
       if (sets.length > 0) {
@@ -1232,11 +1293,7 @@ export function createMailStore(): MailStore {
           )) {
             dirty.add(t)
           }
-          run(
-            `DELETE FROM messages WHERE folder_id = ? AND uid IN (${placeholders(chunk.length)})`,
-            folderId,
-            ...chunk
-          )
+          removeOrDemote(folderId, `folder_id = ? AND uid IN (${placeholders(chunk.length)})`, folderId, ...chunk)
         }
         recomputeThreads(dirty)
       })()
@@ -1256,14 +1313,15 @@ export function createMailStore(): MailStore {
             minUid
           )
         )
-        const res = database
-          .prepare(
-            'DELETE FROM messages WHERE folder_id = ? AND uid >= ? AND uid NOT IN (SELECT uid FROM present_uids)'
-          )
-          .run(folderId, minUid)
+        const removed = removeOrDemote(
+          folderId,
+          'folder_id = ? AND uid >= ? AND uid NOT IN (SELECT uid FROM present_uids)',
+          folderId,
+          minUid
+        )
         database.exec('DELETE FROM present_uids')
         recomputeThreads(dirty)
-        return { removed: res.changes }
+        return { removed }
       })()
     },
 

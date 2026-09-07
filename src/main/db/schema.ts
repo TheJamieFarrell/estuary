@@ -16,7 +16,7 @@
 import { log } from './log'
 import type { SqlDatabase } from './sqlite'
 
-export const SCHEMA_VERSION = 1
+export const SCHEMA_VERSION = 2
 
 interface Migration {
   version: number
@@ -239,6 +239,28 @@ const migrations: Migration[] = [
         CREATE INDEX IF NOT EXISTS idx_contacts_count ON contacts (count DESC, last_seen DESC);
       `)
       createFtsTable(db)
+    }
+  },
+  {
+    version: 2,
+    name: 'gmail all-mail dedupe',
+    up(db) {
+      db.exec('CREATE INDEX IF NOT EXISTS idx_messages_account_gm_msgid ON messages (account_id, gm_msgid)')
+      // Gmail's "[Gmail]/All Mail" mirrors every other folder. Earlier builds stored that mirror as a
+      // second row per message, so every thread showed each email twice. Keep the copy that lives in a
+      // real folder and drop the All Mail duplicate; the store now refuses to create new ones.
+      db.exec(`
+        DELETE FROM messages WHERE id IN (
+          SELECT a.id FROM messages a
+          JOIN folders fa ON fa.id = a.folder_id
+          WHERE fa.kind = 'all' AND a.gm_msgid IS NOT NULL AND EXISTS (
+            SELECT 1 FROM messages b
+            JOIN folders fb ON fb.id = b.folder_id
+            WHERE b.account_id = a.account_id AND b.gm_msgid = a.gm_msgid
+              AND b.folder_id <> a.folder_id AND fb.kind <> 'all'
+          )
+        )
+      `)
     }
   }
 ]

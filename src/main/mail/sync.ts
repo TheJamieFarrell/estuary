@@ -522,8 +522,11 @@ export class AccountSyncer {
       if (this.stopped || guard++ > 500) return
       const state = this.deps.store.getFolderSyncState(folder.id)
       const cached = this.deps.store.listUids(folder.id)
-      if (cached.length >= limit) return
       const lowest = state.lowestUid ?? (cached.length ? Math.min(...cached) : undefined)
+      // All Mail mirrors other folders and the store keeps only one row per Gmail message, so its
+      // cached row count barely grows; measure its progress by the UID range walked instead.
+      const walked = folder.kind === 'all' && state.uidNext && lowest ? state.uidNext - lowest : cached.length
+      if (walked >= limit) return
       if (!lowest || lowest <= 1) return
       const end = lowest - 1
       const start = Math.max(1, end - BACKFILL_CHUNK + 1)

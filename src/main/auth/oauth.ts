@@ -518,6 +518,7 @@ async function exchangeCode(args: {
 
   const json = await postForm(args.cfg.tokenUrl, body, args.doFetch)
   if (!json.access_token) throw new Error('The provider did not return an access token.')
+  assertMailScopeGranted(args.provider, json.scope)
 
   let email = emailFromClaims(decodeJwtPayload(json.id_token))
   if (!email && args.cfg.userinfoUrl) {
@@ -535,6 +536,28 @@ async function exchangeCode(args: {
   if (args.cfg.allowClientSecret && args.clientSecret) tokens.clientSecret = args.clientSecret
   if (email) tokens.email = email
   return tokens
+}
+
+/**
+ * Google's consent screen lets the user untick individual permissions. A token issued without
+ * the mail scope is accepted by the token endpoint but rejected by IMAP with the unhelpful
+ * "Invalid credentials", so catch it here where we can explain what to do.
+ */
+export function assertMailScopeGranted(provider: OAuthProvider, grantedScope: string | undefined): void {
+  if (!grantedScope) return // provider did not echo the scope; nothing to check
+  const granted = grantedScope.split(/\s+/)
+  if (provider === 'google' && !granted.includes('https://mail.google.com/')) {
+    throw new Error(
+      'Google signed you in but did not grant UniMail access to your mail. Sign in again and make sure the ' +
+        '"Read, compose, send and permanently delete all your email from Gmail" box is ticked before you click Continue.'
+    )
+  }
+  if (provider === 'microsoft' && !granted.some((s) => /IMAP\.AccessAsUser\.All$/i.test(s))) {
+    throw new Error(
+      'Microsoft signed you in but did not grant UniMail IMAP access to your mailbox. Sign in again and accept all the ' +
+        'requested permissions.'
+    )
+  }
 }
 
 async function fetchUserinfoEmail(

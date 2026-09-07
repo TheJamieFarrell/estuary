@@ -84,12 +84,14 @@ img { max-width: 100%; }
 }
 .titlebar__brand svg { color: var(--accent); }
 .titlebar__spacer { flex: 1; }
+/* Stays draggable: only the search box itself (.sb) opts out, so the empty space
+   either side of it works as a title-bar grab handle. */
 .titlebar__center {
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
   min-width: 0;
-  -webkit-app-region: no-drag;
+  -webkit-app-region: drag;
 }
 .titlebar__right { display: flex; align-items: center; gap: var(--space-1); -webkit-app-region: no-drag; }
 .titlebar button, .titlebar input, .titlebar a { -webkit-app-region: no-drag; }
